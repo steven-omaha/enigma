@@ -61,8 +61,8 @@ impl Rotor {
     pub fn new(mapping: &str, turnover_char: char) -> Rotor {
         let chars: Vec<char> = mapping_to_vector(mapping);
         let turnover_position = Self::find_turnover_position(&turnover_char, &chars);
-        let forward = Self::generate_forward_dict(&chars);
-        let reverse = Self::generate_reverse_dict(&chars);
+        let forward = Self::generate_forward_map(&chars);
+        let reverse = Self::generate_reverse_map(&chars);
         Rotor {
             forward,
             reverse,
@@ -72,7 +72,7 @@ impl Rotor {
         }
     }
 
-    fn generate_forward_dict(vec: &[char]) -> HashMap<char, char> {
+    fn generate_forward_map(vec: &[char]) -> HashMap<char, char> {
         let mut result: HashMap<char, char> = HashMap::with_capacity(NUMBER_LETTERS_IN_ALPHABET);
         for (input, output) in zip(a_to_z(), vec) {
             result.insert(input, *output);
@@ -80,7 +80,7 @@ impl Rotor {
         result
     }
 
-    fn generate_reverse_dict(vec: &[char]) -> HashMap<char, char> {
+    fn generate_reverse_map(vec: &[char]) -> HashMap<char, char> {
         let mut result = HashMap::with_capacity(NUMBER_LETTERS_IN_ALPHABET);
         for (i, output) in vec.iter().enumerate() {
             result.insert(*output, *ALPHABET.get(i).unwrap());

@@ -24,7 +24,7 @@ impl Plugboard {
         self.convert_char(input).unwrap_or(input)
     }
 
-    fn find_match(&self, input: char) -> Option<char> {
+    fn convert_char(&self, input: char) -> Option<char> {
         for pair in &self.items {
             if input == pair.0 {
                 return Some(pair.1);
