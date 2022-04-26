@@ -29,10 +29,10 @@ impl Plugboard {
 
     fn find_match(&self, input: char) -> Option<char> {
         for pair in &self.items {
-            if pair.0 == input {
+            if input == pair.0 {
                 return Some(pair.1);
             }
-            if pair.1 == input {
+            if input == pair.1 {
                 return Some(pair.0);
             }
         }

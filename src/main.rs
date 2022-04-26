@@ -1,14 +1,17 @@
+mod enigma;
 mod plugboard;
 mod rotor;
 mod rotorassembly;
-mod enigma;
 
 use crate::enigma::Enigma;
 
+const MESSAGE: &str = "DIESISTEINTEST";
+
 fn main() {
     let mut enigma = Enigma::new();
-    println!("{}", enigma.encode_message("DIESISTEINTEST".to_string()));
+    let cypher = enigma.encode_message(MESSAGE.to_string());
+    println!("{}", cypher);
 
     let mut enigma = Enigma::new();
-    println!("{}", enigma.encode_message("ODRGYUTQVKOZJR".to_string()));
+    println!("{}", enigma.encode_message(cypher));
 }
