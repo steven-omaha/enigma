@@ -60,12 +60,6 @@ impl RotorAssembly {
     }
 }
 
-fn reflect(input: char) -> char {
-    // rot13 shift  TODO fix this
-    let ascii = input as usize - ASCII_LETTER_A;
-    let output = (ascii + 13) % NUMBER_LETTERS_IN_ALPHABET + ASCII_LETTER_A;
-    output as u8 as char
-}
 
 #[cfg(test)]
 mod tests {
