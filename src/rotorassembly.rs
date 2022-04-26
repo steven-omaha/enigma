@@ -3,6 +3,7 @@ use std::path::Path;
 
 pub struct RotorAssembly {
     rotors: Vec<Rotor>,
+    reflector: Rotor,
 }
 
 impl RotorAssembly {
@@ -13,7 +14,8 @@ impl RotorAssembly {
         for id in ids {
             rotors.push(Rotor::from_file(path, id));
         }
-        RotorAssembly { rotors }
+        let reflector = Rotor::from_file(path, "B");
+        RotorAssembly { rotors, reflector }
     }
 
     pub fn encode_char(&mut self, input: char) -> char {

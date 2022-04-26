@@ -4,7 +4,7 @@ use std::path::Path;
 
 pub struct Rotor {
     chars: Vec<char>,
-    turnover_position: usize,
+    turnover_position: Option<usize>,
     position: usize,
     pub(crate) turnover_has_occured: bool,
 }
@@ -25,11 +25,14 @@ impl Rotor {
         }
     }
 
-    fn find_turnover_position(turnover_char: &char, chars: &[char]) -> usize {
+    fn find_turnover_position(turnover_char: &char, chars: &[char]) -> Option<usize> {
         for (i, val) in chars.iter().enumerate() {
             if val == turnover_char {
-                return i;
+                return Some(i);
             }
+        }
+        if *turnover_char == '_' {
+            return None;
         }
         panic!()
     }
@@ -46,8 +49,10 @@ impl Rotor {
 
     pub fn increment_position(&mut self) {
         self.position = (self.position + 1) % NUMBER_LETTERS_IN_ALPHABET;
-        if self.position == self.turnover_position {
-            self.turnover_has_occured = true;
+        if let Some(pos) = self.turnover_position {
+            if pos == self.position {
+                self.turnover_has_occured = true
+            }
         }
     }
 
