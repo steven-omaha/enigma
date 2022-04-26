@@ -107,4 +107,36 @@ mod tests {
     fn get_rotor_path() -> &'static Path {
         Path::new(PATH)
     }
+
+    #[test]
+    fn reversible() {
+        let input = 'A';
+        let mut rotor = get_instance();
+        rotor.set_position(0);
+        let x = rotor.encode_char(input);
+        let cypher = rotor.encode_char_reverse(x);
+
+        rotor.set_position(0);
+        let x1 = rotor.encode_char(cypher);
+        let cleartext = rotor.encode_char_reverse(x1);
+        assert_eq!(input, cleartext);
+    }
+
+    fn get_instance() -> Rotor {
+        Rotor::from_file(get_rotor_path(), "I")
+    }
+
+    #[test]
+    fn increment_position() {
+        let mut rotor = get_instance();
+        rotor.set_position(0);
+        assert_eq!(rotor.turnover_has_occured, false);
+        for _ in 0..NUMBER_LETTERS_IN_ALPHABET {
+            rotor.increment_position();
+            if rotor.turnover_has_occured {
+                return
+            }
+        }
+        panic!();
+    }
 }
