@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::iter::zip;
 use std::path::Path;
+use std::str::Split;
 
 pub const NUMBER_LETTERS_IN_ALPHABET: usize = 26;
 pub const ASCII_LETTER_A: usize = 65;
@@ -144,28 +145,32 @@ fn get_items_from_file_for_id<'a>(path: &'a Path, id: &'a str) -> Vec<String> {
             continue;
         }
         let mut items = line.split(':');
-        let mut result: Vec<String> = Vec::new();
         if items.next().unwrap() == id {
-            result.push(
-                match items.next() {
-                    Some(x) => x,
-                    None => panic!("Pattern not found"),
-                }
-                .to_owned(),
-            );
-            result.push(
-                match items.next() {
-                    Some(x) => x,
-                    None => panic!("Turnover char not found. Consider using`_` as placeholder"),
-                }
-                .to_owned(),
-            );
+            extract_data(items)
         } else {
             continue;
         };
-        return result;
     }
     panic!("rotor not found");
+}
+
+fn extract_data(mut items: Split<char>) -> Vec<String> {
+    let mut result: Vec<String> = Vec::new();
+    result.push(
+        match items.next() {
+            Some(x) => x,
+            None => panic!("Pattern not found"),
+        }
+            .to_owned(),
+    );
+    result.push(
+        match items.next() {
+            Some(x) => x,
+            None => panic!("Turnover char not found. Consider using`_` as placeholder"),
+        }
+            .to_owned(),
+    );
+    result
 }
 
 fn get_position_in_alphabet(input: char) -> usize {
