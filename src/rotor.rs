@@ -30,9 +30,8 @@ pub struct Reflector {
 impl Reflector {
     pub fn from_file(path: &Path, id: &str) -> Reflector {
         let items = get_items_from_file_for_id(path, id);
-        let mapping = items.get(0).unwrap();
         Reflector {
-            chars: mapping_to_vector(mapping),
+            chars: mapping_to_vector(&items.0),
         }
     }
 }
@@ -129,9 +128,9 @@ impl Rotor {
 
     pub fn from_file(path: &Path, id: &str) -> Rotor {
         let items = get_items_from_file_for_id(path, id);
-        let mapping = items.get(0).unwrap();
-        let turnover_char = items.get(1).unwrap().chars().next().unwrap();
-        Rotor::new(mapping, turnover_char)
+        let mapping = items.0;
+        let turnover_char = items.1.chars().next().unwrap();
+        Rotor::new(&mapping, turnover_char)
     }
 
     pub fn encode_char_reverse(&mut self, input: char) -> char {
@@ -142,7 +141,7 @@ impl Rotor {
     }
 }
 
-fn get_items_from_file_for_id<'a>(path: &'a Path, id: &'a str) -> Vec<String> {
+fn get_items_from_file_for_id<'a>(path: &'a Path, id: &'a str) -> (String, String) {
     let contents = fs::read_to_string(path).unwrap();
     for line in contents.lines() {
         if line.starts_with('#') {
