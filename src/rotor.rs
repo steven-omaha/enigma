@@ -6,7 +6,7 @@ pub struct Rotor {
     chars: Vec<char>,
     turnover_position: Option<usize>,
     position: usize,
-    pub(crate) turnover_has_occured: bool,
+    turnover_has_occured: bool,
 }
 
 pub const NUMBER_LETTERS_IN_ALPHABET: usize = 26;
@@ -23,6 +23,10 @@ impl Rotor {
             position: 0,
             turnover_has_occured: false,
         }
+    }
+
+    pub fn turnover_has_occured(&self)  -> bool {
+        self.turnover_has_occured
     }
 
     fn find_turnover_position(turnover_char: &char, chars: &[char]) -> Option<usize> {
