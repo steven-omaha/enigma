@@ -117,13 +117,17 @@ mod tests {
         Path::new(PATH)
     }
 
-    fn get_instance() -> Rotor {
+    fn get_reflector_rotor_instance() -> Rotor {
+        Rotor::from_file(get_rotor_path(), "B")
+    }
+
+    fn get_cypher_rotor_instance() -> Rotor {
         Rotor::from_file(get_rotor_path(), "I")
     }
 
     #[test]
     fn increment_position() {
-        let mut rotor = get_instance();
+        let mut rotor = get_cypher_rotor_instance();
         rotor.set_position(0);
         assert_eq!(rotor.turnover_has_occured, false);
         for _ in 0..NUMBER_LETTERS_IN_ALPHABET {
@@ -133,5 +137,17 @@ mod tests {
             }
         }
         panic!();
+    }
+
+    #[test]
+    fn reflector_is_reversible() {
+        let input = 'A';
+        let mut rotor = get_reflector_rotor_instance();
+        let cypher = rotor.encode_char(input);
+
+        let mut rotor = get_reflector_rotor_instance();
+        let output = rotor.encode_char(cypher);
+
+        assert_eq!(input, output);
     }
 }
