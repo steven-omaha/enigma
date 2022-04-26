@@ -21,10 +21,7 @@ impl Plugboard {
     }
 
     pub fn encode_char(self: &Plugboard, input: char) -> char {
-        match self.find_match(input) {
-            Some(output) => output,
-            None => input,
-        }
+        self.convert_char(input).unwrap_or(input)
     }
 
     fn find_match(&self, input: char) -> Option<char> {

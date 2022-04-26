@@ -159,23 +159,13 @@ fn get_items_from_file_for_id<'a>(path: &'a Path, id: &'a str) -> Vec<String> {
 }
 
 #[allow(clippy::vec_init_then_push)]
-fn extract_data(mut items: Split<char>) -> Vec<String> {
-    let mut result: Vec<String> = Vec::new();
-    result.push(
-        match items.next() {
-            Some(x) => x,
-            None => panic!("Pattern not found"),
-        }
-        .to_owned(),
-    );
-    result.push(
-        match items.next() {
-            Some(x) => x,
-            None => panic!("Turnover char not found. Consider using`_` as placeholder"),
-        }
-        .to_owned(),
-    );
-    result
+fn extract_data(mut items: Split<char>) -> (String, String) {
+    let pattern = items.next().expect("Rotor pattern missing").to_owned();
+    let turnover_char = items
+        .next()
+        .expect("Turnover char not found. Consider using`_` as placeholder")
+        .to_owned();
+    (pattern, turnover_char)
 }
 
 fn get_position_in_alphabet(input: char) -> usize {
