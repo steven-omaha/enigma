@@ -149,7 +149,7 @@ fn get_items_from_file_for_id<'a>(path: &'a Path, id: &'a str) -> (String, Strin
         }
         let mut items = line.split(':');
         if items.next().unwrap() == id {
-            extract_data(items)
+            return extract_data(items);
         } else {
             continue;
         };
