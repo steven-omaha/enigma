@@ -43,9 +43,10 @@ pub trait Encode {
 
 impl Encode for Rotor {
     fn encode_char(&mut self, input: char) -> char {
-        *self.forward.get(
-            &self.shift_char_by_position(input, true)
-        ).unwrap()
+        *self
+            .forward
+            .get(&self.shift_char_by_position(input, true))
+            .unwrap()
     }
 }
 
@@ -114,7 +115,7 @@ impl Rotor {
     fn shift_char_by_position(&self, input: char, forward: bool) -> char {
         let mut ascii = input as usize - ASCII_LETTER_A;
         if forward {
-             ascii += self.position
+            ascii += self.position
         } else {
             ascii -= self.position
         }
@@ -134,7 +135,10 @@ impl Rotor {
     }
 
     pub fn encode_char_reverse(&mut self, input: char) -> char {
-        *self.reverse.get(&self.shift_char_by_position(input, false)).unwrap()
+        *self
+            .reverse
+            .get(&self.shift_char_by_position(input, false))
+            .unwrap()
     }
 }
 
@@ -161,14 +165,14 @@ fn extract_data(mut items: Split<char>) -> Vec<String> {
             Some(x) => x,
             None => panic!("Pattern not found"),
         }
-            .to_owned(),
+        .to_owned(),
     );
     result.push(
         match items.next() {
             Some(x) => x,
             None => panic!("Turnover char not found. Consider using`_` as placeholder"),
         }
-            .to_owned(),
+        .to_owned(),
     );
     result
 }
@@ -268,7 +272,7 @@ mod tests {
     fn test_shift_char_by_position_forward() {
         let mut rotor = get_cypher_rotor_instance();
         rotor.set_position(0);
-        for i  in 0..NUMBER_LETTERS_IN_ALPHABET {
+        for i in 0..NUMBER_LETTERS_IN_ALPHABET {
             let output = rotor.shift_char_by_position('A', true);
             assert_eq!(&output, ALPHABET.get(i).unwrap());
             rotor.increment_position();
@@ -281,9 +285,12 @@ mod tests {
     fn test_shift_char_by_position_reverse() {
         let mut rotor = get_cypher_rotor_instance();
         rotor.set_position(0);
-        for i  in 0..NUMBER_LETTERS_IN_ALPHABET {
+        for i in 0..NUMBER_LETTERS_IN_ALPHABET {
             let output = rotor.shift_char_by_position('A', false);
-            assert_eq!(&output, ALPHABET.get(NUMBER_LETTERS_IN_ALPHABET - i).unwrap());
+            assert_eq!(
+                &output,
+                ALPHABET.get(NUMBER_LETTERS_IN_ALPHABET - i).unwrap()
+            );
             rotor.increment_position();
         }
         let output = rotor.shift_char_by_position('A', false);
