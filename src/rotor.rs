@@ -117,20 +117,6 @@ mod tests {
         Path::new(PATH)
     }
 
-    #[test]
-    fn reversible() {
-        let input = 'A';
-        let mut rotor = get_instance();
-        rotor.set_position(0);
-        let x = rotor.encode_char(input);
-        let cypher = rotor.encode_char_reverse(x);
-
-        rotor.set_position(0);
-        let x1 = rotor.encode_char(cypher);
-        let cleartext = rotor.encode_char_reverse(x1);
-        assert_eq!(input, cleartext);
-    }
-
     fn get_instance() -> Rotor {
         Rotor::from_file(get_rotor_path(), "I")
     }

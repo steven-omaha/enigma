@@ -20,7 +20,7 @@ impl RotorAssembly {
 
     pub fn encode_char(&mut self, input: char) -> char {
         let mut output = self.encode_forward(input);
-        output = reflect(output);
+        output = self.reflector.encode_char(output);
         self.encode_reverse(output)
     }
 
@@ -81,4 +81,18 @@ mod tests {
         let mut assembly = RotorAssembly::new_default();
         assert_eq!(assembly.encode_char('A'), 'I');
     }
+
+    #[test]
+    fn reversible() {
+        let input = 'A';
+        let mut assembly = RotorAssembly::new_default();
+        let cypher = assembly.encode_char(input);
+
+        let mut assembly = RotorAssembly::new_default();
+        let output = assembly.encode_char(cypher);
+
+        assert_eq!(input, output);
+        assert_ne!(input, cypher);
+    }
+
 }
