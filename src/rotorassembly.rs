@@ -83,6 +83,7 @@ mod tests {
 
     #[test]
     fn reversible() {
+        // TODO make this more thorough
         let input = 'A';
         let mut assembly = RotorAssembly::new_default();
         let cypher = assembly.encode_char(input);
