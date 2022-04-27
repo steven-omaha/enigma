@@ -24,6 +24,7 @@ enum ShiftDirection {
 pub struct Rotor {
     forward: HashMap<char, char>,
     reverse: HashMap<char, char>,
+    mapping: Vec<char>,
     turnover_position: usize,
     position: usize,
     turnover_has_occured: bool,
@@ -71,6 +72,7 @@ impl Rotor {
         Rotor {
             forward,
             reverse,
+            mapping: chars,
             turnover_position,
             position: 0,
             turnover_has_occured: false,
@@ -139,10 +141,20 @@ impl Rotor {
     }
 
     pub fn encode_char_reverse(&mut self, input: char) -> char {
-        *self
-            .reverse
-            .get(&self.shift_char_by_position(input, false))
-            .unwrap()
+        let mut mapping = self.mapping.clone();
+        mapping.rotate_left(self.position);
+        let mut position = None;
+        for (i, value) in mapping.iter().enumerate() {
+            if input == *value {
+                position = Some(i);
+                break;
+            }
+        }
+        match position {
+            Some(p) => return (p + ASCII_LETTER_A) as u8 as char,
+            None => panic!(),
+        }
+
     }
 }
 
@@ -245,6 +257,7 @@ mod tests {
             let cypher = reflector.encode_char(input);
             let output = reflector.encode_char(cypher);
 
+            assert_ne!(input, cypher);
             assert_eq!(input, output);
         }
     }
