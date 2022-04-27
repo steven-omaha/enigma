@@ -14,6 +14,12 @@ const ALPHABET: [char; NUMBER_LETTERS_IN_ALPHABET] = [
     'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 ];
 
+#[derive(PartialEq)]
+enum ShiftDirection {
+    Forward,
+    Reverse
+}
+
 #[derive(Debug)]
 pub struct Rotor {
     forward: HashMap<char, char>,
@@ -44,7 +50,7 @@ impl Encode for Rotor {
     fn encode_char(&mut self, input: char) -> char {
         *self
             .forward
-            .get(&self.shift_char_by_position(input, true))
+            .get(&self.shift_char_by_position(input, ShiftDirection::Forward))
             .unwrap()
     }
 }
@@ -111,12 +117,11 @@ impl Rotor {
         self.position = position;
     }
 
-    fn shift_char_by_position(&self, input: char, forward: bool) -> char {
+    fn shift_char_by_position(&self, input: char, direction: ShiftDirection) -> char {
         let mut ascii = input as usize - ASCII_LETTER_A;
-        if forward {
-            ascii += self.position
-        } else {
-            ascii -= self.position
+        match direction {
+            ShiftDirection::Forward => ascii += self.position,
+            ShiftDirection::Reverse => ascii -= self.position,
         }
         ascii = ascii % NUMBER_LETTERS_IN_ALPHABET + ASCII_LETTER_A;
         ascii as u8 as char
@@ -263,11 +268,11 @@ mod tests {
         let mut rotor = get_cypher_rotor_instance();
         rotor.set_position(0);
         for i in 0..NUMBER_LETTERS_IN_ALPHABET {
-            let output = rotor.shift_char_by_position('A', true);
+            let output = rotor.shift_char_by_position('A', ShiftDirection::Forward);
             assert_eq!(&output, ALPHABET.get(i).unwrap());
             rotor.increment_position();
         }
-        let output = rotor.shift_char_by_position('A', true);
+        let output = rotor.shift_char_by_position('A', ShiftDirection::Forward);
         assert_eq!(output, 'A');
     }
 
@@ -276,14 +281,13 @@ mod tests {
         let mut rotor = get_cypher_rotor_instance();
         rotor.set_position(0);
         for i in 0..NUMBER_LETTERS_IN_ALPHABET {
-            let output = rotor.shift_char_by_position('A', false);
-            assert_eq!(
-                &output,
-                ALPHABET.get(NUMBER_LETTERS_IN_ALPHABET - i).unwrap()
-            );
+            let input = ALPHABET.get(i).unwrap();
+            let output = rotor.shift_char_by_position(*input, ShiftDirection::Reverse);
+            println!("{} -> {} == A", input, output);
+            assert_eq!(output, 'A');
             rotor.increment_position();
         }
-        let output = rotor.shift_char_by_position('A', false);
+        let output = rotor.shift_char_by_position('A', ShiftDirection::Reverse);
         assert_eq!(output, 'A');
     }
 }
