@@ -193,10 +193,7 @@ fn get_position_in_alphabet(input: char) -> usize {
 }
 
 fn mapping_to_vector(mapping: &str) -> Vec<char> {
-    let mut vec: Vec<char> = Vec::with_capacity(NUMBER_LETTERS_IN_ALPHABET);
-    for character in mapping.chars() {
-        vec.push(character);
-    }
+    let vec: Vec<char> = mapping.chars().collect();
     assert_eq!(vec.len(), NUMBER_LETTERS_IN_ALPHABET);
     vec
 }
