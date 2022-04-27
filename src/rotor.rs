@@ -70,7 +70,7 @@ impl Encode for Reflector {
 impl Rotor {
     pub fn new(mapping: &str, turnover_char: char) -> Rotor {
         let chars: Vec<char> = mapping_to_vector(mapping);
-        let turnover_position = Self::find_turnover_position(&turnover_char, &chars);
+        let turnover_position = Self::find_turnover_position(&turnover_char);
         let forward = Self::generate_forward_map(&chars);
         let reverse = Self::generate_reverse_map(&chars);
         Rotor {
@@ -108,8 +108,8 @@ impl Rotor {
         self.turnover_has_occured
     }
 
-    fn find_turnover_position(turnover_char: &char, chars: &[char]) -> usize {
-        for (i, val) in chars.iter().enumerate() {
+    fn find_turnover_position(turnover_char: &char) -> usize {
+        for (i, val) in ALPHABET.iter().enumerate() {
             if val == turnover_char {
                 return i;
             }
@@ -245,17 +245,28 @@ mod tests {
     }
 
     #[test]
+    #[allow(unused_assignments)]  // new_position is indeed used
     fn increment_position() {
         let mut rotor = get_cypher_rotor_instance();
         rotor.set_position(0);
+        let mut old_position = 0;
+        let mut new_position = 0;
         assert!(!rotor.turnover_has_occured);
         for _ in 0..NUMBER_LETTERS_IN_ALPHABET {
             rotor.increment_position();
-            if rotor.turnover_has_occured {
-                return;
-            }
+            new_position = rotor.position;
+            assert_eq!((old_position+1)% NUMBER_LETTERS_IN_ALPHABET, new_position);
+            old_position = new_position;
         }
-        panic!();
+        assert!(rotor.turnover_has_occured);
+    }
+
+    #[test]
+    fn pass_turnover_char() {
+        let mut rotor = get_cypher_rotor_instance();
+        rotor.set_position(16);  // letter Q
+        rotor.increment_position(); // letter R
+        assert!(rotor.turnover_has_occured())
     }
 
     #[test]
