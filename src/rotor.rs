@@ -294,7 +294,6 @@ mod tests {
         for i in 0..NUMBER_LETTERS_IN_ALPHABET {
             let input = ALPHABET.get(i).unwrap();
             let output = rotor.shift_char_by_position(*input, ShiftDirection::Reverse);
-            println!("{} -> {} == A", input, output);
             assert_eq!(output, 'A');
             rotor.increment_position();
         }
