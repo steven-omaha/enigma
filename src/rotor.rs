@@ -116,6 +116,7 @@ impl Rotor {
     }
 
     pub fn set_position(&mut self, position: usize) {
+        assert!(position < NUMBER_LETTERS_IN_ALPHABET);
         self.position = position;
     }
 
