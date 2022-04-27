@@ -36,9 +36,12 @@ mod tests {
 
     #[test]
     fn can_encrypt_and_decrypt() {
-        let mut enigma = Enigma::new();
         let input = MESSAGE.to_string();
+
+        let mut enigma = Enigma::new();
         let cypher = enigma.encode_message(input.clone());
+
+        let mut enigma = Enigma::new();
         let output = enigma.encode_message(cypher);
 
         assert_eq!(input, output);
