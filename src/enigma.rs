@@ -27,3 +27,20 @@ impl Enigma {
         Chars::map(input.chars(), |c| self.encode_char(c)).collect::<String>()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{Enigma};
+
+    const MESSAGE: &str = "DIESISTEINTEST";
+
+    #[test]
+    fn can_encrypt_and_decrypt() {
+        let mut enigma = Enigma::new();
+        let input = MESSAGE.to_string();
+        let cypher = enigma.encode_message(input.clone());
+        let output = enigma.encode_message(cypher);
+
+        assert_eq!(input, output);
+    }
+}
