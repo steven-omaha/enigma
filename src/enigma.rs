@@ -35,7 +35,21 @@ mod tests {
     const MESSAGE: &str = "DIESISTEINTESTTESTTEST";
 
     #[test]
-    fn can_encrypt_and_decrypt() {
+    fn can_encrypt_and_decrypt_char() {
+        let input = 'A';
+
+        let mut enigma = Enigma::new();
+        let cypher = enigma.encode_char(input);
+
+        let mut enigma = Enigma::new();
+        let output = enigma.encode_char(cypher);
+
+        assert_eq!(input, output);
+    }
+
+
+    #[test]
+    fn can_encrypt_and_decrypt_message() {
         let input = MESSAGE.to_string();
 
         let mut enigma = Enigma::new();
