@@ -59,6 +59,7 @@ impl RotorAssembly {
 
 #[cfg(test)]
 mod tests {
+    use crate::rotor::NUMBER_LETTERS_IN_ALPHABET;
     use crate::rotorassembly::*;
 
     #[test]
@@ -69,7 +70,10 @@ mod tests {
     #[test]
     fn encode_char() {
         let mut assembly = RotorAssembly::new_default();
-        assert_eq!(assembly.encode_char('A'), 'N');
+        let old_position = assembly.rotors.get(0).unwrap().get_position();
+        assert_eq!(assembly.encode_char('A'), 'E');
+        let new_position = assembly.rotors.get(0).unwrap().get_position();
+        assert_eq!((old_position+1)%NUMBER_LETTERS_IN_ALPHABET, new_position);
     }
 
     #[test]

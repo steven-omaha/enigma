@@ -84,6 +84,10 @@ impl Rotor {
         }
     }
 
+    pub fn get_position(&self) -> usize {
+        self.position
+    }
+
     fn generate_forward_map(vec: &[char]) -> HashMap<char, char> {
         let mut result: HashMap<char, char> = HashMap::with_capacity(NUMBER_LETTERS_IN_ALPHABET);
         for (input, output) in zip(a_to_z(), vec) {
