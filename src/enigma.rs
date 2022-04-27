@@ -32,7 +32,7 @@ impl Enigma {
 mod tests {
     use crate::{Enigma};
 
-    const MESSAGE: &str = "DIESISTEINTEST";
+    const MESSAGE: &str = "DIESISTEINTESTTESTTEST";
 
     #[test]
     fn can_encrypt_and_decrypt() {
