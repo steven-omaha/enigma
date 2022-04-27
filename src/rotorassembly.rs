@@ -20,6 +20,10 @@ impl RotorAssembly {
 
     pub fn encode_char(&mut self, input: char) -> char {
         self.increment_cypher_rotor_positions();
+        for (i, id) in vec!["I", "II", "III"].iter().enumerate() {
+            dbg!(self.rotors.get(i).unwrap());
+        }
+        println!();
         let mut output = self.encode_forward(input);
         output = self.reflector.encode_char(output);
         self.encode_reverse(output)

@@ -1,5 +1,6 @@
 use core::char;
 use std::collections::HashMap;
+use std::fmt::{Debug, Formatter};
 use std::fs;
 use std::iter::zip;
 use std::path::Path;
@@ -20,7 +21,6 @@ enum ShiftDirection {
     Reverse
 }
 
-#[derive(Debug)]
 pub struct Rotor {
     forward: HashMap<char, char>,
     reverse: HashMap<char, char>,
@@ -40,6 +40,17 @@ impl Reflector {
         Reflector {
             chars: mapping_to_vector(&items.0),
         }
+    }
+}
+
+impl Debug for Rotor {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let turnover;
+        match self.turnover_has_occured {
+            true => turnover = "T",
+            false => turnover = "_",
+        };
+        f.write_fmt(format_args!("{}/{} {}", self.position, self.turnover_position, turnover))
     }
 }
 
