@@ -28,6 +28,7 @@ pub struct Rotor {
     turnover_position: usize,
     position: usize,
     turnover_has_occured: bool,
+    position_must_be_incremented: bool,
 }
 
 pub struct Reflector {
@@ -49,10 +50,13 @@ pub trait Encode {
 
 impl Encode for Rotor {
     fn encode_char(&mut self, input: char) -> char {
-        *self
+        assert!(!self.position_must_be_incremented);
+        let result = *self
             .forward
             .get(&self.shift_char_by_position(input, ShiftDirection::Forward))
-            .unwrap()
+            .unwrap();
+        self.position_must_be_incremented = true;
+        result
     }
 }
 
@@ -76,6 +80,7 @@ impl Rotor {
             turnover_position,
             position: 0,
             turnover_has_occured: false,
+            position_must_be_incremented: false,
         }
     }
 
@@ -113,10 +118,12 @@ impl Rotor {
         if self.position == self.turnover_position {
             self.turnover_has_occured = true
         }
+        self.position_must_be_incremented = false;
     }
 
     pub fn set_position(&mut self, position: usize) {
         assert!(position < NUMBER_LETTERS_IN_ALPHABET);
+        self.position_must_be_incremented = false;
         self.position = position;
     }
 
