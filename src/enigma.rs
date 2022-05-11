@@ -20,7 +20,8 @@ impl Enigma {
     }
 
     pub fn encode_char(&mut self, input: char) -> char {
-        self.plugboard.encode_char(self.assembly.encode_char(input))
+        self.assembly.encode_char(self.plugboard.encode_char(input))
+        //self.assembly.encode_char(input)
     }
 
     pub fn encode_message(&mut self, input: String) -> String {
