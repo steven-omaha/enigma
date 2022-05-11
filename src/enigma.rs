@@ -74,6 +74,7 @@ mod tests {
 
     #[test]
     fn can_encrypt_and_decrypt_message_with_random_settings() {
+        todo!();
         let input = MESSAGE.to_string();
 
         let mut enigma = Enigma::new_default();
