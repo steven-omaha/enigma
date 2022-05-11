@@ -10,7 +10,18 @@ pub struct Enigma {
 }
 
 impl Enigma {
-    pub fn new() -> Enigma {
+    pub fn set_positions(&mut self, positions: [usize; 3]) {
+        self.assembly.set_positions(positions);
+    }
+
+    pub fn new(assembly: RotorAssembly, plugboard: Plugboard) -> Self {
+        Enigma {
+            assembly,
+            plugboard,
+        }
+    }
+
+    pub fn new_default() -> Enigma {
         let assembly = RotorAssembly::new_default();
         let plugboard = Plugboard::from_file(Path::new(plugboard::PATH));
         Enigma {

@@ -1,3 +1,4 @@
+use std::iter::zip;
 use crate::rotor::{Encode, Reflector, Rotor, PATH};
 use std::path::Path;
 
@@ -7,6 +8,16 @@ pub struct RotorAssembly {
 }
 
 impl RotorAssembly {
+    pub fn set_positions(&mut self, positions: [usize; 3]) {
+        for (rotor, position) in zip(self.rotors.iter_mut(), positions) {
+            rotor.set_position(position);
+        }
+    }
+
+    pub fn new(rotors: Vec<Rotor>, reflector: Reflector) -> Self {
+        RotorAssembly { rotors, reflector }
+    }
+
     pub fn new_default() -> RotorAssembly {
         let mut rotors = Vec::new();
         let ids = vec!["I", "II", "III"];
