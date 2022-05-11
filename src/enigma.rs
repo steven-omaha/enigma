@@ -31,7 +31,7 @@ impl Enigma {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Enigma};
+    use crate::Enigma;
 
     const MESSAGE: &str = "DIESISTEINTESTTESTTEST";
 
@@ -47,7 +47,6 @@ mod tests {
 
         assert_eq!(input, output);
     }
-
 
     #[test]
     fn can_encrypt_and_decrypt_message() {
