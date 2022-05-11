@@ -7,6 +7,10 @@ pub struct RotorAssembly {
     reflector: Reflector,
 }
 
+macro_rules! debug_println {
+            ($($arg:tt)*) => (if ::std::cfg!(debug_assertions) { ::std::println!($($arg)*); })
+}
+
 impl RotorAssembly {
     pub fn set_positions(&mut self, positions: [usize; 3]) {
         for (rotor, position) in zip(self.rotors.iter_mut(), positions) {
@@ -33,9 +37,9 @@ impl RotorAssembly {
         self.increment_cypher_rotor_positions();
         for i in 0..3 {
             let rotor = self.rotors.get(i).unwrap();
-            dbg!(rotor);
+            debug_println!("{:#?}", rotor);
         }
-        println!();
+        debug_println!();
         let mut output = self.encode_forward(input);
         output = self.reflector.encode_char(output);
         self.encode_reverse(output)
