@@ -15,11 +15,11 @@ fn main() {
     let mut enigma = build_enigma();
 
     let message = MESSAGE.to_string();
-    let cypher = enigma.encode_message(message.clone());
+    let cypher = enigma.encode_message(message);
     println!("{}", cypher);
 
     enigma.set_positions(ROTOR_SETTINGS);
-    let decrypted = enigma.encode_message(cypher.clone());
+    let decrypted = enigma.encode_message(cypher);
 
     println!("{}", decrypted);
 }
