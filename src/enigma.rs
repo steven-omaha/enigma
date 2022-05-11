@@ -71,6 +71,15 @@ mod tests {
 
         assert_eq!(input, output);
     }
+
+    #[test]
+    fn can_encrypt_and_decrypt_message_with_random_settings() {
+        let input = MESSAGE.to_string();
+
+        let mut enigma = Enigma::new_default();
+        let cypher = enigma.encode_message(input.clone());
+
+        let mut enigma = Enigma::new_default();
         let output = enigma.encode_message(cypher);
 
         assert_eq!(input, output);
