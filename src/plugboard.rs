@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::fs;
 use std::path::Path;
 
@@ -17,7 +18,21 @@ impl Plugboard {
             let char2 = chars.next().unwrap();
             items.push((char1, char2));
         }
+
+        Self::sanity_check(&items);
         Plugboard { items }
+    }
+
+    fn sanity_check(items: &[(char, char)]) {
+        assert!(!items.is_empty() && items.len() <= 10);
+
+        // check character not used more than once
+        let mut hs = HashSet::new();
+        for pair in items {
+            hs.insert(pair.0);
+            hs.insert(pair.1);
+        }
+        assert_eq!(hs.len(), items.len() * 2);
     }
 
     pub fn encode_char(self: &Plugboard, input: char) -> char {
