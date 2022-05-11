@@ -31,7 +31,8 @@ impl Enigma {
     }
 
     pub fn encode_char(&mut self, input: char) -> char {
-        self.plugboard.encode_char(self.assembly.encode_char(self.plugboard.encode_char(input)))
+        self.plugboard
+            .encode_char(self.assembly.encode_char(self.plugboard.encode_char(input)))
     }
 
     pub fn encode_message(&mut self, input: String) -> String {
@@ -49,23 +50,27 @@ mod tests {
     fn can_encrypt_and_decrypt_char() {
         let input = 'A';
 
-        let mut enigma = Enigma::new();
+        let mut enigma = Enigma::new_default();
         let cypher = enigma.encode_char(input);
 
-        let mut enigma = Enigma::new();
+        let mut enigma = Enigma::new_default();
         let output = enigma.encode_char(cypher);
 
         assert_eq!(input, output);
     }
 
     #[test]
-    fn can_encrypt_and_decrypt_message() {
+    fn can_encrypt_and_decrypt_message_with_default_settings() {
         let input = MESSAGE.to_string();
 
-        let mut enigma = Enigma::new();
+        let mut enigma = Enigma::new_default();
         let cypher = enigma.encode_message(input.clone());
 
-        let mut enigma = Enigma::new();
+        let mut enigma = Enigma::new_default();
+        let output = enigma.encode_message(cypher);
+
+        assert_eq!(input, output);
+    }
         let output = enigma.encode_message(cypher);
 
         assert_eq!(input, output);
