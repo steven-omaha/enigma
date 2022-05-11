@@ -1,7 +1,9 @@
 use std::char;
 
 pub const NUMBER_LETTERS_IN_ALPHABET: usize = 26;
+
 pub const ASCII_LETTER_A: usize = 65;
+
 pub const ALPHABET: [char; NUMBER_LETTERS_IN_ALPHABET] = [
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
     'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
@@ -29,3 +31,12 @@ pub fn get_position_in_alphabet(input: char) -> usize {
     assert!(position_in_alphabet < NUMBER_LETTERS_IN_ALPHABET);
     position_in_alphabet
 }
+
+pub fn is_small_letter(input: char) -> bool {
+    ('a' .. 'z').contains(&input)
+}
+
+pub fn is_capital_letter(input: char) -> bool {
+    ('A' .. 'Z').contains(&input)
+}
+

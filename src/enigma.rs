@@ -2,7 +2,6 @@ use crate::alphabet::get_position_in_alphabet;
 use crate::message::Message;
 use crate::plugboard::Plugboard;
 use crate::rotorassembly::RotorAssembly;
-use std::str::Chars;
 
 pub struct Enigma {
     assembly: RotorAssembly,
@@ -78,14 +77,25 @@ impl Enigma {
     }
 
     pub fn encode_message(&mut self, input: &str) -> String {
-        Chars::map(input.chars(), |c| self.encode_char(c)).collect::<String>()
+        input
+            .chars()
+            .map(|c| self.encode_char(sanity_check(c)))
+            .collect::<String>()
     }
+}
+
+fn sanity_check(input: char) -> char {
+    assert!(
+        ('A'..='Z').contains(&input),
+        "message must only contain upper case ascii letters"
+    );
+    input
 }
 
 #[cfg(test)]
 mod tests {
     use crate::rotorassembly::RotorAssembly;
-    use crate::{plugboard, Enigma, Plugboard};
+    use crate::{enigma, plugboard, Enigma, Plugboard};
     use std::path::Path;
 
     const MESSAGE: &str = "DIESISTEINTESTTESTTEST";
@@ -135,4 +145,18 @@ mod tests {
 
         assert_eq!(MESSAGE.to_string(), output);
     }
+
+    #[test]
+    fn test_sanity_check() {
+        enigma::sanity_check('A');
+        enigma::sanity_check('B');
+        enigma::sanity_check('Z');
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_sanity_check_invalid() {
+        enigma::sanity_check('a');
+    }
+
 }

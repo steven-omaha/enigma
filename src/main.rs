@@ -6,18 +6,18 @@ mod rotor;
 mod rotorassembly;
 
 use crate::enigma::Enigma;
+use crate::message::{preprocess_for_enigma, TEXT};
 use crate::plugboard::Plugboard;
 use std::iter::zip;
 use std::path::Path;
 
-const TEXT: &str = "MEINETESTNACHRICHTMITWETTERBERICHTDREILITER";
 const INITIALIZATION: &str = "QRS";
 const ROTOR_SETTINGS: [usize; 3] = [7, 8, 21];
 
 fn main() {
     let mut enigma = build_enigma();
 
-    let message = message::Message::new(INITIALIZATION.to_string(), TEXT.to_string());
+    let message = message::Message::new(INITIALIZATION.to_string(), preprocess_for_enigma(TEXT));
     println!("CLEARTEXT MESSAGE:\n{}", message);
     println!();
 
