@@ -10,7 +10,7 @@ pub const NUMBER_LETTERS_IN_ALPHABET: usize = 26;
 pub const ASCII_LETTER_A: usize = 65;
 pub const PATH: &str = "src/rotors.txt";
 
-const ALPHABET: [char; NUMBER_LETTERS_IN_ALPHABET] = [
+pub const ALPHABET: [char; NUMBER_LETTERS_IN_ALPHABET] = [
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
     'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 ];

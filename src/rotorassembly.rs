@@ -64,6 +64,7 @@ impl RotorAssembly {
 
 #[cfg(test)]
 mod tests {
+    use crate::rotor;
     use crate::rotor::NUMBER_LETTERS_IN_ALPHABET;
     use crate::rotorassembly::*;
 
@@ -78,20 +79,24 @@ mod tests {
         let old_position = assembly.rotors.get(0).unwrap().get_position();
         assert_eq!(assembly.encode_char('A'), 'E');
         let new_position = assembly.rotors.get(0).unwrap().get_position();
-        assert_eq!((old_position+1)%NUMBER_LETTERS_IN_ALPHABET, new_position);
+        assert_eq!(
+            (old_position + 1) % NUMBER_LETTERS_IN_ALPHABET,
+            new_position
+        );
     }
 
     #[test]
     fn reversible() {
-        // TODO make this more thorough
-        let input = 'A';
-        let mut assembly = RotorAssembly::new_default();
-        let cypher = assembly.encode_char(input);
+        for char in rotor::ALPHABET {
+            let input = char;
+            let mut assembly = RotorAssembly::new_default();
+            let cypher = assembly.encode_char(input);
 
-        let mut assembly = RotorAssembly::new_default();
-        let output = assembly.encode_char(cypher);
+            let mut assembly = RotorAssembly::new_default();
+            let output = assembly.encode_char(cypher);
 
-        assert_eq!(input, output);
-        assert_ne!(input, cypher);
+            assert_eq!(input, output);
+            assert_ne!(input, cypher);
+        }
     }
 }
