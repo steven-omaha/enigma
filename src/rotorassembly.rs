@@ -60,11 +60,11 @@ impl RotorAssembly {
         rotor.increment_position();
         for i in 0..self.rotors.len() - 1 {
             let r1 = self.rotors.get_mut(i).unwrap();
-            let turnover_has_occured = r1.turnover_has_occured();
+            let turnover_has_ocured = r1.turnover_has_occurred();
             r1.reset_turnover_state();
 
             let r2 = self.rotors.get_mut(i + 1).unwrap();
-            if turnover_has_occured {
+            if turnover_has_ocured {
                 r2.increment_position();
             }
         }

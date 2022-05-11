@@ -23,7 +23,7 @@ pub struct Rotor {
     mapping: Vec<char>,
     turnover_position: usize,
     position: usize,
-    turnover_has_occured: bool,
+    turnover_has_occurred: bool,
 }
 
 pub struct Reflector {
@@ -41,7 +41,7 @@ impl Reflector {
 
 impl Debug for Rotor {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let turnover = match self.turnover_has_occured {
+        let turnover = match self.turnover_has_occurred {
             true => "T",
             false => "_",
         };
@@ -84,7 +84,7 @@ impl Rotor {
             mapping: chars,
             turnover_position,
             position: 0,
-            turnover_has_occured: false,
+            turnover_has_occurred: false,
         }
     }
 
@@ -109,8 +109,8 @@ impl Rotor {
         result
     }
 
-    pub fn turnover_has_occured(&self) -> bool {
-        self.turnover_has_occured
+    pub fn turnover_has_occurred(&self) -> bool {
+        self.turnover_has_occurred
     }
 
     fn find_turnover_position(turnover_char: &char) -> usize {
@@ -125,7 +125,7 @@ impl Rotor {
     pub fn increment_position(&mut self) {
         self.position = (self.position + 1) % NUMBER_LETTERS_IN_ALPHABET;
         if self.position == self.turnover_position {
-            self.turnover_has_occured = true
+            self.turnover_has_occurred = true
         }
     }
 
@@ -145,7 +145,7 @@ impl Rotor {
     }
 
     pub fn reset_turnover_state(&mut self) {
-        self.turnover_has_occured = false;
+        self.turnover_has_occurred = false;
     }
 
     pub fn from_file(path: &Path, id: &str) -> Rotor {
@@ -246,7 +246,7 @@ mod tests {
         rotor.set_position(0);
         let mut old_position = 0;
         let mut new_position = 0;
-        assert!(!rotor.turnover_has_occured);
+        assert!(!rotor.turnover_has_occurred);
         for _ in 0..NUMBER_LETTERS_IN_ALPHABET {
             rotor.increment_position();
             new_position = rotor.position;
@@ -256,7 +256,7 @@ mod tests {
             );
             old_position = new_position;
         }
-        assert!(rotor.turnover_has_occured);
+        assert!(rotor.turnover_has_occurred);
     }
 
     #[test]
@@ -264,7 +264,7 @@ mod tests {
         let mut rotor = get_cypher_rotor_instance();
         rotor.set_position(16); // letter Q
         rotor.increment_position(); // letter R
-        assert!(rotor.turnover_has_occured())
+        assert!(rotor.turnover_has_occurred())
     }
 
     #[test]
