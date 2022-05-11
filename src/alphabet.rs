@@ -33,10 +33,9 @@ pub fn get_position_in_alphabet(input: char) -> usize {
 }
 
 pub fn is_small_letter(input: char) -> bool {
-    ('a' .. 'z').contains(&input)
+    ('a'..='z').contains(&input)
 }
 
 pub fn is_capital_letter(input: char) -> bool {
-    ('A' .. 'Z').contains(&input)
+    ('A'..='Z').contains(&input)
 }
-
