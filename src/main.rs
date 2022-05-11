@@ -1,9 +1,9 @@
+mod alphabet;
 mod enigma;
+mod message;
 mod plugboard;
 mod rotor;
 mod rotorassembly;
-mod alphabet;
-mod message;
 
 use crate::enigma::Enigma;
 use crate::plugboard::Plugboard;

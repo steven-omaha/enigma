@@ -1,5 +1,5 @@
-use std::iter::zip;
 use crate::rotor::{Encode, Reflector, Rotor, PATH};
+use std::iter::zip;
 use std::path::Path;
 
 pub struct RotorAssembly {

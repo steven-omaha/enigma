@@ -1,8 +1,8 @@
 use crate::alphabet::get_position_in_alphabet;
+use crate::message::Message;
 use crate::plugboard::Plugboard;
 use crate::rotorassembly::RotorAssembly;
 use std::str::Chars;
-use crate::message::Message;
 
 pub struct Enigma {
     assembly: RotorAssembly,
@@ -84,9 +84,9 @@ impl Enigma {
 
 #[cfg(test)]
 mod tests {
-    use std::path::Path;
-    use crate::{Enigma, Plugboard, plugboard};
     use crate::rotorassembly::RotorAssembly;
+    use crate::{plugboard, Enigma, Plugboard};
+    use std::path::Path;
 
     const MESSAGE: &str = "DIESISTEINTESTTESTTEST";
 
@@ -98,7 +98,6 @@ mod tests {
             plugboard,
         }
     }
-
 
     #[test]
     fn can_encrypt_and_decrypt_char() {

@@ -88,7 +88,7 @@ impl Rotor {
         }
     }
 
-    #[allow(dead_code)]  // used in tests
+    #[allow(dead_code)] // used in tests
     pub fn get_position(&self) -> usize {
         self.position
     }
