@@ -22,6 +22,8 @@ impl RotorAssembly {
         RotorAssembly { rotors, reflector }
     }
 
+    // used in tests
+    #[allow(dead_code)]
     pub fn new_default() -> RotorAssembly {
         let mut rotors = Vec::new();
         let ids = vec!["I", "II", "III"];

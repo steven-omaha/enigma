@@ -3,33 +3,31 @@ mod plugboard;
 mod rotor;
 mod rotorassembly;
 mod alphabet;
+mod message;
 
 use crate::enigma::Enigma;
 use crate::plugboard::Plugboard;
 use std::iter::zip;
 use std::path::Path;
 
-const MESSAGE: &str = "MEINETESTNACHRICHTMITWETTERBERICHTDREILITER";
+const TEXT: &str = "MEINETESTNACHRICHTMITWETTERBERICHTDREILITER";
 const INITIALIZATION: &str = "QRS";
 const ROTOR_SETTINGS: [usize; 3] = [7, 8, 21];
 
 fn main() {
     let mut enigma = build_enigma();
 
-    let encrypted_indicator = enigma.get_encrypted_indicator(INITIALIZATION);
-    enigma.set_indicator_for_encryption(INITIALIZATION);
+    let message = message::Message::new(INITIALIZATION.to_string(), TEXT.to_string());
+    println!("CLEARTEXT MESSAGE:\n{}", message);
+    println!();
 
-    let cypher = enigma.encode_message(MESSAGE);
-    println!("encrypted indicator: {}", encrypted_indicator);
-    println!("cypher text: {}", cypher);
+    let encrypted_message = enigma.encrypt(message);
+    println!("ENCRYPTED MESSAGE:\n{}", encrypted_message);
+    println!();
 
     enigma.set_positions(ROTOR_SETTINGS);
-    let decrypted_indicator = enigma.get_decrypted_indicator(encrypted_indicator.as_str());
-    enigma.set_indicator_for_decryption(decrypted_indicator.as_str());
-    let decrypted = enigma.encode_message(cypher.as_str());
-
-    println!("decrypted indicator: {}", decrypted_indicator);
-    println!("decrypted message: {}", decrypted);
+    let decrypted_message = enigma.decrypt(encrypted_message);
+    println!("DECRYPTED MESSAGE:\n{}", decrypted_message);
 }
 
 fn build_enigma() -> Enigma {

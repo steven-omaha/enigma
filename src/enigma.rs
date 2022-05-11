@@ -1,9 +1,8 @@
 use crate::alphabet::get_position_in_alphabet;
-use crate::plugboard;
 use crate::plugboard::Plugboard;
 use crate::rotorassembly::RotorAssembly;
-use std::path::Path;
 use std::str::Chars;
+use crate::message::Message;
 
 pub struct Enigma {
     assembly: RotorAssembly,
@@ -11,6 +10,20 @@ pub struct Enigma {
 }
 
 impl Enigma {
+    pub fn decrypt(&mut self, message: Message) -> Message {
+        let decrypted_indicator = self.get_decrypted_indicator(&message.indicator);
+        self.set_indicator_for_decryption(&decrypted_indicator);
+        let text = self.encode_message(&message.text);
+        Message::new(decrypted_indicator, text)
+    }
+
+    pub fn encrypt(&mut self, message: Message) -> Message {
+        let encrypted_indicator = self.get_encrypted_indicator(&message.indicator);
+        self.set_indicator_for_encryption(&message.indicator);
+        let text = self.encode_message(&message.text);
+        Message::new(encrypted_indicator, text)
+    }
+
     pub fn set_indicator_for_encryption(&mut self, indicator: &str) {
         assert_eq!(indicator.len(), 3);
         let mut positions = [0; 3];
@@ -59,15 +72,6 @@ impl Enigma {
         }
     }
 
-    pub fn new_default() -> Enigma {
-        let assembly = RotorAssembly::new_default();
-        let plugboard = Plugboard::from_file(Path::new(plugboard::PATH));
-        Enigma {
-            assembly,
-            plugboard,
-        }
-    }
-
     pub fn encode_char(&mut self, input: char) -> char {
         self.plugboard
             .encode_char(self.assembly.encode_char(self.plugboard.encode_char(input)))
@@ -80,18 +84,30 @@ impl Enigma {
 
 #[cfg(test)]
 mod tests {
-    use crate::Enigma;
+    use std::path::Path;
+    use crate::{Enigma, Plugboard, plugboard};
+    use crate::rotorassembly::RotorAssembly;
 
     const MESSAGE: &str = "DIESISTEINTESTTESTTEST";
+
+    fn new_default() -> Enigma {
+        let assembly = RotorAssembly::new_default();
+        let plugboard = Plugboard::from_file(Path::new(plugboard::PATH));
+        Enigma {
+            assembly,
+            plugboard,
+        }
+    }
+
 
     #[test]
     fn can_encrypt_and_decrypt_char() {
         let input = 'A';
 
-        let mut enigma = Enigma::new_default();
+        let mut enigma = new_default();
         let cypher = enigma.encode_char(input);
 
-        let mut enigma = Enigma::new_default();
+        let mut enigma = new_default();
         let output = enigma.encode_char(cypher);
 
         assert_eq!(input, output);
@@ -99,10 +115,10 @@ mod tests {
 
     #[test]
     fn can_encrypt_and_decrypt_message_with_default_settings() {
-        let mut enigma = Enigma::new_default();
+        let mut enigma = new_default();
         let cypher = enigma.encode_message(MESSAGE);
 
-        let mut enigma = Enigma::new_default();
+        let mut enigma = new_default();
         let output = enigma.encode_message(cypher.as_str());
 
         assert_eq!(MESSAGE, output);
@@ -112,10 +128,10 @@ mod tests {
     fn can_encrypt_and_decrypt_message_with_random_settings() {
         todo!();
 
-        let mut enigma = Enigma::new_default();
+        let mut enigma = new_default();
         let cypher = enigma.encode_message(MESSAGE);
 
-        let mut enigma = Enigma::new_default();
+        let mut enigma = new_default();
         let output = enigma.encode_message(cypher.as_str());
 
         assert_eq!(MESSAGE.to_string(), output);
