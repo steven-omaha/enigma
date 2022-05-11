@@ -79,8 +79,7 @@ impl RotorAssembly {
 
 #[cfg(test)]
 mod tests {
-    use crate::rotor;
-    use crate::rotor::NUMBER_LETTERS_IN_ALPHABET;
+    use crate::alphabet::{ALPHABET, NUMBER_LETTERS_IN_ALPHABET};
     use crate::rotorassembly::*;
 
     #[test]
@@ -102,7 +101,7 @@ mod tests {
 
     #[test]
     fn reversible() {
-        for char in rotor::ALPHABET {
+        for char in ALPHABET {
             let input = char;
             let mut assembly = RotorAssembly::new_default();
             let cypher = assembly.encode_char(input);

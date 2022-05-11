@@ -1,3 +1,6 @@
+use crate::alphabet::{
+    get_position_in_alphabet, ALPHABET, ASCII_LETTER_A, NUMBER_LETTERS_IN_ALPHABET,
+};
 use core::char;
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter};
@@ -6,19 +9,12 @@ use std::iter::zip;
 use std::path::Path;
 use std::str::Split;
 
-pub const NUMBER_LETTERS_IN_ALPHABET: usize = 26;
-pub const ASCII_LETTER_A: usize = 65;
 pub const PATH: &str = "src/rotors.txt";
-
-pub const ALPHABET: [char; NUMBER_LETTERS_IN_ALPHABET] = [
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-    'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-];
 
 #[derive(PartialEq)]
 enum ShiftDirection {
     Forward,
-    Reverse
+    Reverse,
 }
 
 pub struct Rotor {
@@ -49,7 +45,10 @@ impl Debug for Rotor {
             true => "T",
             false => "_",
         };
-        f.write_fmt(format_args!("{}/{} {}", self.position, self.turnover_position, turnover))
+        f.write_fmt(format_args!(
+            "{}/{} {}",
+            self.position, self.turnover_position, turnover
+        ))
     }
 }
 
@@ -169,7 +168,6 @@ impl Rotor {
             Some(p) => (p + ASCII_LETTER_A) as u8 as char,
             None => panic!(),
         }
-
     }
 }
 
@@ -197,13 +195,6 @@ fn extract_data(mut items: Split<char>) -> (String, String) {
         .expect("Turnover char not found. Consider using`_` as placeholder")
         .to_owned();
     (pattern, turnover_char)
-}
-
-fn get_position_in_alphabet(input: char) -> usize {
-    let upper = input.to_uppercase().next().unwrap() as usize;
-    let position_in_alphabet = upper - ASCII_LETTER_A;
-    assert!(position_in_alphabet < NUMBER_LETTERS_IN_ALPHABET);
-    position_in_alphabet
 }
 
 fn mapping_to_vector(mapping: &str) -> Vec<char> {
@@ -248,7 +239,7 @@ mod tests {
     }
 
     #[test]
-    #[allow(unused_assignments)]  // new_position is indeed used
+    #[allow(unused_assignments)] // new_position is indeed used
     fn increment_position() {
         let mut rotor = get_cypher_rotor_instance();
         rotor.set_position(0);
@@ -258,7 +249,10 @@ mod tests {
         for _ in 0..NUMBER_LETTERS_IN_ALPHABET {
             rotor.increment_position();
             new_position = rotor.position;
-            assert_eq!((old_position+1)% NUMBER_LETTERS_IN_ALPHABET, new_position);
+            assert_eq!(
+                (old_position + 1) % NUMBER_LETTERS_IN_ALPHABET,
+                new_position
+            );
             old_position = new_position;
         }
         assert!(rotor.turnover_has_occured);
@@ -267,7 +261,7 @@ mod tests {
     #[test]
     fn pass_turnover_char() {
         let mut rotor = get_cypher_rotor_instance();
-        rotor.set_position(16);  // letter Q
+        rotor.set_position(16); // letter Q
         rotor.increment_position(); // letter R
         assert!(rotor.turnover_has_occured())
     }
