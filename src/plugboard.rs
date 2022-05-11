@@ -64,9 +64,36 @@ mod tests {
     #[test]
     fn encode_char() {
         let plugboard = Plugboard::from_file(Path::new(PATH));
-        assert_eq!(plugboard.encode_char('A'), 'S');
-        assert_eq!(plugboard.encode_char('S'), 'A');
-        assert_eq!(plugboard.encode_char('H'), 'L');
-        assert_eq!(plugboard.encode_char('Z'), 'Z');
+        test_char(&plugboard, 'A', 'S');
+        test_char(&plugboard, 'S', 'A');
+        test_char(&plugboard, 'Q', 'M');
+        test_char(&plugboard, 'M', 'Q');
+        test_char(&plugboard, 'K', 'P');
+        test_char(&plugboard, 'P', 'K');
+        test_char(&plugboard, 'R', 'V');
+        test_char(&plugboard, 'V', 'R');
+        test_char(&plugboard, 'H', 'L');
+        test_char(&plugboard, 'L', 'H');
+        test_char(&plugboard, 'C', 'O');
+        test_char(&plugboard, 'O', 'C');
+        test_char(&plugboard, 'N', 'D');
+        test_char(&plugboard, 'D', 'N');
+
+        test_char(&plugboard, 'B', 'B');
+        test_char(&plugboard, 'E', 'E');
+        test_char(&plugboard, 'F', 'F');
+        test_char(&plugboard, 'G', 'G');
+        test_char(&plugboard, 'I', 'I');
+        test_char(&plugboard, 'J', 'J');
+        test_char(&plugboard, 'T', 'T');
+        test_char(&plugboard, 'U', 'U');
+        test_char(&plugboard, 'W', 'W');
+        test_char(&plugboard, 'X', 'X');
+        test_char(&plugboard, 'Y', 'Y');
+        test_char(&plugboard, 'Z', 'Z');
+    }
+
+    fn test_char(plugboard: &Plugboard, input: char, expected: char) {
+        assert_eq!(plugboard.encode_char(input), expected)
     }
 }
