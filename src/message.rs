@@ -1,4 +1,4 @@
-use crate::alphabet::{is_small_letter, is_capital_letter};
+use crate::alphabet::{is_capital_letter, is_small_letter};
 use std::fmt::{Display, Formatter};
 
 pub const TEXT: &str =

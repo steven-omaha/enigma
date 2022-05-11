@@ -158,5 +158,4 @@ mod tests {
     fn test_sanity_check_invalid() {
         enigma::sanity_check('a');
     }
-
 }
