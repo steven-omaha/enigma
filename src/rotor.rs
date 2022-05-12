@@ -33,6 +33,10 @@ pub struct Reflector {
 impl Reflector {
     pub fn from_file(path: &Path, id: &str) -> Reflector {
         let items = get_items_from_file_for_id(path, id);
+        assert_eq!(
+            items.1, '_',
+            "Found turnover char for reflector. Should have been `_`."
+        );
         Reflector {
             chars: mapping_to_vector(&items.0),
         }
@@ -95,7 +99,7 @@ impl Rotor {
 
     fn generate_forward_map(vec: &[char]) -> HashMap<char, char> {
         let mut result: HashMap<char, char> = HashMap::with_capacity(NUMBER_LETTERS_IN_ALPHABET);
-        for (input, output) in zip(a_to_z(), vec) {
+        for (input, output) in zip('A'..='Z', vec) {
             result.insert(input, *output);
         }
         result
@@ -151,50 +155,49 @@ impl Rotor {
     pub fn from_file(path: &Path, id: &str) -> Rotor {
         let items = get_items_from_file_for_id(path, id);
         let mapping = items.0;
-        let turnover_char = items.1.chars().next().unwrap();
+        let turnover_char = items.1;
         Rotor::new(&mapping, turnover_char)
     }
 
     pub fn encode_char_reverse(&mut self, input: char) -> char {
         let mut mapping = self.mapping.clone();
         mapping.rotate_left(self.position);
-        let mut position = None;
-        for (i, value) in mapping.iter().enumerate() {
+        for (position, value) in mapping.iter().enumerate() {
             if input == *value {
-                position = Some(i);
-                break;
+                return (position + ASCII_LETTER_A) as u8 as char;
             }
         }
-        match position {
-            Some(p) => (p + ASCII_LETTER_A) as u8 as char,
-            None => panic!(),
-        }
+        panic!();
     }
 }
 
-fn get_items_from_file_for_id<'a>(path: &'a Path, id: &'a str) -> (String, String) {
-    let contents = fs::read_to_string(path).unwrap();
-    for line in contents.lines() {
+fn get_items_from_file_for_id<'a>(path: &'a Path, id: &'a str) -> (String, char) {
+    let content = fs::read_to_string(path).unwrap();
+    let line = find_line_for_rotor_id(&content, id);
+    extract_data_from_line(line)
+}
+
+fn find_line_for_rotor_id<'a>(content: &'a str, id: &'a str) -> Split<'a, char> {
+    for line in content.lines() {
         if line.starts_with('#') {
             continue;
         }
         let mut items = line.split(':');
         if items.next().unwrap() == id {
-            return extract_data(items);
-        } else {
-            continue;
+            return items;
         };
     }
     panic!("rotor not found");
 }
 
-#[allow(clippy::vec_init_then_push)]
-fn extract_data(mut items: Split<char>) -> (String, String) {
+fn extract_data_from_line(mut items: Split<char>) -> (String, char) {
     let pattern = items.next().expect("Rotor pattern missing").to_owned();
     let turnover_char = items
         .next()
-        .expect("Turnover char not found. Consider using`_` as placeholder")
-        .to_owned();
+        .expect("`:` separator missing")
+        .chars()
+        .next()
+        .expect("Turnover char not found. Consider using`_` as placeholder");
     (pattern, turnover_char)
 }
 
@@ -202,16 +205,6 @@ fn mapping_to_vector(mapping: &str) -> Vec<char> {
     let vec: Vec<char> = mapping.chars().collect();
     assert_eq!(vec.len(), NUMBER_LETTERS_IN_ALPHABET);
     vec
-}
-
-fn a_to_z() -> Vec<char> {
-    let mut result = Vec::new();
-    for value in ASCII_LETTER_A..ASCII_LETTER_A + NUMBER_LETTERS_IN_ALPHABET {
-        result.push(value as u8 as char);
-    }
-    assert_eq!(*result.get(0).unwrap(), 'A');
-    assert_eq!(*result.get(NUMBER_LETTERS_IN_ALPHABET - 1).unwrap(), 'Z');
-    result
 }
 
 #[cfg(test)]
@@ -243,20 +236,33 @@ mod tests {
     #[allow(unused_assignments)] // new_position is indeed used
     fn increment_position() {
         let mut rotor = get_cypher_rotor_instance();
-        rotor.set_position(0);
-        let mut old_position = 0;
-        let mut new_position = 0;
+
+        let start_position = 0;
+        rotor.set_position(start_position);
+        let mut old_position = start_position;
+        let mut new_position = start_position;
+
         assert!(!rotor.turnover_has_occurred);
+
         for _ in 0..NUMBER_LETTERS_IN_ALPHABET {
             rotor.increment_position();
+
             new_position = rotor.position;
             assert_eq!(
                 (old_position + 1) % NUMBER_LETTERS_IN_ALPHABET,
                 new_position
             );
+
+            if new_position == rotor.turnover_position {
+                assert!(rotor.turnover_has_occurred);
+                rotor.reset_turnover_state();
+            } else {
+                assert!(!rotor.turnover_has_occurred)
+            }
+
             old_position = new_position;
         }
-        assert!(rotor.turnover_has_occurred);
+        assert_eq!(rotor.position, start_position);
     }
 
     #[test]
@@ -269,7 +275,7 @@ mod tests {
 
     #[test]
     fn reflector_is_reversible() {
-        for input in a_to_z() {
+        for input in 'A'..='Z' {
             let mut reflector = get_reflector_rotor_instance();
 
             let cypher = reflector.encode_char(input);
