@@ -1,4 +1,4 @@
-use crate::alphabet::get_position_in_alphabet;
+use crate::alphabet::{get_position_in_alphabet, is_capital_letter};
 use crate::message::Message;
 use crate::plugboard::Plugboard;
 use crate::rotorassembly::RotorAssembly;
@@ -86,7 +86,7 @@ impl Enigma {
 
 fn sanity_check(input: char) -> char {
     assert!(
-        ('A'..='Z').contains(&input),
+        is_capital_letter(input),
         "message must only contain upper case ascii letters"
     );
     input
