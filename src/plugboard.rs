@@ -16,10 +16,13 @@ impl Pair {
         input == self.item0 || input == self.item1
     }
 
-    fn swap(&self, input: char) -> char {
+    fn swap(&self, input: char) -> Option<char> {
         if input == self.item0 {
-            self.item1
-        } else { self.item0 }
+            return Some(self.item1);
+        } else if input == self.item1 {
+            return Some(self.item0);
+        }
+        None
     }
 }
 
@@ -33,7 +36,7 @@ impl Plugboard {
             let mut chars = line.chars();
             let item0 = chars.next().unwrap();
             let item1 = chars.next().unwrap();
-            items.push(Pair {item0, item1});
+            items.push(Pair { item0, item1 });
         }
 
         Self::sanity_check(&items);
@@ -43,26 +46,25 @@ impl Plugboard {
     fn sanity_check(items: &[Pair]) {
         assert!(!items.is_empty() && items.len() <= 10);
 
-        // check character not used more than once
         let mut hs = HashSet::new();
         for pair in items {
             hs.insert(pair.item0);
             hs.insert(pair.item1);
         }
-        assert_eq!(hs.len(), items.len() * 2);
+        assert_eq!(
+            hs.len(),
+            items.len() * 2,
+            "check character not used more than once"
+        );
     }
 
-    pub fn encode_char(self: &Plugboard, input: char) -> char {
-        self.apply_plugs_to_char(input).unwrap_or(input)
-    }
-
-    fn apply_plugs_to_char(&self, input: char) -> Option<char> {
+    pub fn encode_char(&self, input: char) -> char {
         for pair in &self.items {
             if pair.contains(input) {
-                return Some(pair.swap(input))
+                return pair.swap(input).unwrap();
             }
         }
-        None
+        input
     }
 }
 
