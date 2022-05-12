@@ -3,7 +3,24 @@ use std::fs;
 use std::path::Path;
 
 pub struct Plugboard {
-    items: Vec<(char, char)>,
+    items: Vec<Pair>,
+}
+
+struct Pair {
+    item0: char,
+    item1: char,
+}
+
+impl Pair {
+    fn contains(&self, input: char) -> bool {
+        input == self.item0 || input == self.item1
+    }
+
+    fn swap(&self, input: char) -> char {
+        if input == self.item0 {
+            self.item1
+        } else { self.item0 }
+    }
 }
 
 pub(crate) const PATH: &str = "src/plugboard.txt";
@@ -14,38 +31,35 @@ impl Plugboard {
         let contents = fs::read_to_string(path).unwrap();
         for line in contents.lines() {
             let mut chars = line.chars();
-            let char1 = chars.next().unwrap();
-            let char2 = chars.next().unwrap();
-            items.push((char1, char2));
+            let item0 = chars.next().unwrap();
+            let item1 = chars.next().unwrap();
+            items.push(Pair {item0, item1});
         }
 
         Self::sanity_check(&items);
         Plugboard { items }
     }
 
-    fn sanity_check(items: &[(char, char)]) {
+    fn sanity_check(items: &[Pair]) {
         assert!(!items.is_empty() && items.len() <= 10);
 
         // check character not used more than once
         let mut hs = HashSet::new();
         for pair in items {
-            hs.insert(pair.0);
-            hs.insert(pair.1);
+            hs.insert(pair.item0);
+            hs.insert(pair.item1);
         }
         assert_eq!(hs.len(), items.len() * 2);
     }
 
     pub fn encode_char(self: &Plugboard, input: char) -> char {
-        self.convert_char(input).unwrap_or(input)
+        self.apply_plugs_to_char(input).unwrap_or(input)
     }
 
-    fn convert_char(&self, input: char) -> Option<char> {
+    fn apply_plugs_to_char(&self, input: char) -> Option<char> {
         for pair in &self.items {
-            if input == pair.0 {
-                return Some(pair.1);
-            }
-            if input == pair.1 {
-                return Some(pair.0);
+            if pair.contains(input) {
+                return Some(pair.swap(input))
             }
         }
         None
