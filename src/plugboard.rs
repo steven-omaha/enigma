@@ -1,28 +1,37 @@
+use crate::alphabet::is_capital_letter;
 use std::collections::HashSet;
 use std::fs;
 use std::path::Path;
 
 pub struct Plugboard {
-    items: Vec<Pair>,
+    pairs: Vec<Pair>,
 }
 
-struct Pair {
-    item0: char,
-    item1: char,
+pub struct Pair {
+    char0: char,
+    char1: char,
 }
 
 impl Pair {
     fn contains(&self, input: char) -> bool {
-        input == self.item0 || input == self.item1
+        input == self.char0 || input == self.char1
     }
 
     fn swap(&self, input: char) -> Option<char> {
-        if input == self.item0 {
-            return Some(self.item1);
-        } else if input == self.item1 {
-            return Some(self.item0);
+        if input == self.char0 {
+            return Some(self.char1);
+        } else if input == self.char1 {
+            return Some(self.char0);
         }
         None
+    }
+
+    pub fn new(char0: char, char1: char) -> Self {
+        assert_ne!(char0, char1, "chars cannot be equal");
+        let msg = "must be a capital letter";
+        assert!(is_capital_letter(char0), "{} {}", "char0", msg);
+        assert!(is_capital_letter(char1), "{} {}", "char1", msg);
+        Pair { char0, char1 }
     }
 }
 
@@ -30,17 +39,24 @@ pub(crate) const PATH: &str = "src/plugboard.txt";
 
 impl Plugboard {
     pub fn from_file(path: &Path) -> Plugboard {
-        let mut items = Vec::new();
+        let mut pairs = Vec::new();
         let contents = fs::read_to_string(path).unwrap();
         for line in contents.lines() {
-            let mut chars = line.chars();
-            let item0 = chars.next().unwrap();
-            let item1 = chars.next().unwrap();
-            items.push(Pair { item0, item1 });
+            pairs.push(Self::get_pair_from_line(line));
         }
+        Self::new(pairs)
+    }
 
-        Self::sanity_check(&items);
-        Plugboard { items }
+    fn get_pair_from_line(line: &str) -> Pair {
+        let mut chars = line.chars();
+        let char0 = chars.next().unwrap();
+        let char1 = chars.next().unwrap();
+        Pair::new(char0, char1)
+    }
+
+    pub fn new(pairs: Vec<Pair>) -> Self {
+        Self::sanity_check(&pairs);
+        Plugboard { pairs }
     }
 
     fn sanity_check(items: &[Pair]) {
@@ -48,8 +64,8 @@ impl Plugboard {
 
         let mut hs = HashSet::new();
         for pair in items {
-            hs.insert(pair.item0);
-            hs.insert(pair.item1);
+            hs.insert(pair.char0);
+            hs.insert(pair.char1);
         }
         assert_eq!(
             hs.len(),
@@ -59,7 +75,7 @@ impl Plugboard {
     }
 
     pub fn encode_char(&self, input: char) -> char {
-        for pair in &self.items {
+        for pair in &self.pairs {
             if pair.contains(input) {
                 return pair.swap(input).unwrap();
             }
@@ -73,40 +89,36 @@ mod tests {
     use crate::plugboard::*;
 
     #[test]
-    fn can_init() {
+    fn can_load_file() {
         Plugboard::from_file(Path::new(PATH));
     }
 
     #[test]
     fn encode_char() {
-        let plugboard = Plugboard::from_file(Path::new(PATH));
+        let plugboard = Plugboard {
+            pairs: vec![Pair {
+                char0: 'A',
+                char1: 'S',
+            }],
+        };
         test_char(&plugboard, 'A', 'S');
         test_char(&plugboard, 'S', 'A');
-        test_char(&plugboard, 'Q', 'M');
-        test_char(&plugboard, 'M', 'Q');
-        test_char(&plugboard, 'K', 'P');
-        test_char(&plugboard, 'P', 'K');
-        test_char(&plugboard, 'R', 'V');
-        test_char(&plugboard, 'V', 'R');
-        test_char(&plugboard, 'H', 'L');
-        test_char(&plugboard, 'L', 'H');
-        test_char(&plugboard, 'C', 'O');
-        test_char(&plugboard, 'O', 'C');
-        test_char(&plugboard, 'N', 'D');
-        test_char(&plugboard, 'D', 'N');
-
         test_char(&plugboard, 'B', 'B');
-        test_char(&plugboard, 'E', 'E');
-        test_char(&plugboard, 'F', 'F');
-        test_char(&plugboard, 'G', 'G');
-        test_char(&plugboard, 'I', 'I');
-        test_char(&plugboard, 'J', 'J');
-        test_char(&plugboard, 'T', 'T');
-        test_char(&plugboard, 'U', 'U');
-        test_char(&plugboard, 'W', 'W');
-        test_char(&plugboard, 'X', 'X');
-        test_char(&plugboard, 'Y', 'Y');
         test_char(&plugboard, 'Z', 'Z');
+    }
+
+    #[test]
+    #[should_panic]
+    fn pair_with_identical_chars() {
+        Pair::new('A', 'A');
+    }
+
+    #[test]
+    fn pair() {
+        let pair = Pair::new('A', 'B');
+        assert!(pair.contains('A'));
+        assert!(pair.contains('B'));
+        assert!(!pair.contains('C'));
     }
 
     fn test_char(plugboard: &Plugboard, input: char, expected: char) {
