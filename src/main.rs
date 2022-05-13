@@ -34,7 +34,9 @@ fn main() {
     println!("ENCRYPTED MESSAGE:\n{}", encrypted_message);
     println!();
 
-    known_plaintext_attack(encrypted_message, "WETTERBERICHT".to_string());
+    known_plaintext_attack(&encrypted_message, "WETTERBERICHT".to_string());
+    println!();
+    known_plaintext_attack(&encrypted_message, "WETTERBERICHTNULLSECHSNULLNULL".to_string());
 }
 
 fn build_enigma() -> Enigma {

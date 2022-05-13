@@ -1,9 +1,10 @@
 use crate::message::Message;
 use std::iter::zip;
 
-pub fn known_plaintext_attack(message: Message, known_plaintext: String) {
-    let possible_positions = find_possible_positions(&message, &known_plaintext);
-    print_possible_positions(&message, &known_plaintext, &possible_positions);
+pub fn known_plaintext_attack(message: &Message, known_plaintext: String) {
+    let possible_positions = find_possible_positions(message, &known_plaintext);
+    print_possible_positions(message, &known_plaintext, &possible_positions);
+    println!("possible positions: {}", possible_positions.len());
 }
 
 fn find_possible_positions(message: &Message, known_plaintext: &str) -> Vec<usize> {
