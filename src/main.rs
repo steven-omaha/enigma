@@ -50,7 +50,7 @@ fn build_enigma() -> Enigma {
     ];
     let reflector = rotor::Reflector::from_file(rotor_path, "B");
 
-    for (rotor, position) in zip(rotors.iter_mut(), ROTOR_SETTINGS) {
+    for (rotor, position) in zip(&mut rotors, ROTOR_SETTINGS) {
         rotor.set_position(position);
     }
 

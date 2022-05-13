@@ -9,7 +9,7 @@ pub struct RotorAssembly {
 
 impl RotorAssembly {
     pub fn set_positions(&mut self, positions: [usize; 3]) {
-        for (rotor, position) in zip(self.rotors.iter_mut(), positions) {
+        for (rotor, position) in zip(&mut self.rotors, positions) {
             rotor.set_position(position);
         }
     }
