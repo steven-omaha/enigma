@@ -18,12 +18,11 @@ impl Pair {
     }
 
     fn swap(&self, input: char) -> Option<char> {
-        if input == self.char0 {
-            return Some(self.char1);
-        } else if input == self.char1 {
-            return Some(self.char0);
+        match input {
+            c if c == self.char0 => Some(self.char1),
+            c if c == self.char1 => Some(self.char0),
+            _ => None,
         }
-        None
     }
 
     pub fn new(char0: char, char1: char) -> Self {
