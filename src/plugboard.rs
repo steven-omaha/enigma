@@ -125,6 +125,6 @@ mod tests {
     }
 
     fn test_char(plugboard: &Plugboard, input: char, expected: char) {
-        assert_eq!(plugboard.encode_char(input), expected)
+        assert_eq!(plugboard.encode_char(input), expected);
     }
 }
