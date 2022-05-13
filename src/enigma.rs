@@ -36,17 +36,21 @@ impl Enigma {
     fn encode_indicator(&mut self, indicator: &Indicator, mode: Mode) -> Indicator {
         indicator.sanity_check(&mode);
         match mode {
-            Mode::Decrypt => {
-                let value = self.encode_message(indicator.value.as_str());
-                Indicator { value }
-            }
-            Mode::Encrypt => {
-                let mut result1 = self.encode_message(indicator.value.as_str());
-                let result2 = self.encode_message(indicator.value.as_str());
-                result1.push_str(result2.as_str());
-                Indicator { value: result1 }
-            }
+            Mode::Decrypt => self.decrypt_indicator(indicator),
+            Mode::Encrypt => self.encrypt_indicator(indicator),
         }
+    }
+
+    fn encrypt_indicator(&mut self, indicator: &Indicator) -> Indicator {
+        let mut result1 = self.encode_message(indicator.value.as_str());
+        let result2 = self.encode_message(indicator.value.as_str());
+        result1.push_str(result2.as_str());
+        Indicator { value: result1 }
+    }
+
+    fn decrypt_indicator(&mut self, indicator: &Indicator) -> Indicator {
+        let value = self.encode_message(indicator.value.as_str());
+        Indicator { value }
     }
 
     pub fn set_positions(&mut self, positions: [usize; 3]) {
