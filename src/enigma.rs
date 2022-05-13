@@ -12,20 +12,19 @@ pub struct Enigma {
 impl Enigma {
     pub fn decrypt(&mut self, message: Message) -> Message {
         let decrypted_indicator = self.encode_indicator(&message.indicator, Mode::Decrypt);
-        self.set_indicator(&decrypted_indicator, Mode::Decrypt);
+        self.set_indicator(&decrypted_indicator);
         let text = self.encode_message(&message.text);
         Message::new(decrypted_indicator, text)
     }
 
     pub fn encrypt(&mut self, message: Message) -> Message {
         let encrypted_indicator = self.encode_indicator(&message.indicator, Mode::Encrypt);
-        self.set_indicator(&message.indicator, Mode::Encrypt);
+        self.set_indicator(&message.indicator);
         let text = self.encode_message(&message.text);
         Message::new(encrypted_indicator, text)
     }
 
-    fn set_indicator(&mut self, indicator: &Indicator, mode: Mode) {
-        indicator.sanity_check(&mode);
+    fn set_indicator(&mut self, indicator: &Indicator) {
         let mut positions = [0; 3];
         for (i, char) in indicator.get_first_triplet().chars().enumerate() {
             positions[i] = get_position_in_alphabet(char);
