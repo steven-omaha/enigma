@@ -36,6 +36,11 @@ impl Indicator {
     pub fn get_first_triplet(&self) -> &str {
         &self.value[0..3]
     }
+
+    pub fn get_second_triplet(&self) -> &str {
+        assert_eq!(self.value.len(), 6, "cannot get second triplet if indicator is of length 3");
+        &self.value[3..6]
+    }
 }
 
 impl Message {

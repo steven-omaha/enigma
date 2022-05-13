@@ -48,8 +48,10 @@ impl Enigma {
     }
 
     fn decrypt_indicator(&mut self, indicator: &Indicator) -> Indicator {
-        let value = self.encode_message(indicator.get_first_triplet());
-        Indicator::new(value)
+        let first_triplet = self.encode_message(indicator.get_first_triplet());
+        let second_triplet = self.encode_message(indicator.get_second_triplet());
+        assert_eq!(first_triplet, second_triplet, "decrypted indicator triplets do not match");
+        Indicator::new(first_triplet)
     }
 
     pub fn set_positions(&mut self, positions: [usize; 3]) {
