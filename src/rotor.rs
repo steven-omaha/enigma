@@ -45,10 +45,7 @@ impl Reflector {
 
 impl Debug for Rotor {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let turnover = match self.turnover_has_occurred {
-            true => "T",
-            false => "_",
-        };
+        let turnover = if self.turnover_has_occurred { "T" } else { "_" };
         f.write_fmt(format_args!(
             "{}/{} {}",
             self.position, self.turnover_position, turnover
@@ -79,7 +76,7 @@ impl Encode for Reflector {
 impl Rotor {
     pub fn new(mapping: &str, turnover_char: char) -> Rotor {
         let chars: Vec<char> = mapping_to_vector(mapping);
-        let turnover_position = Self::find_turnover_position(&turnover_char);
+        let turnover_position = Self::find_turnover_position(turnover_char);
         let forward = Self::generate_forward_map(&chars);
         let reverse = Self::generate_reverse_map(&chars);
         Rotor {
@@ -117,9 +114,9 @@ impl Rotor {
         self.turnover_has_occurred
     }
 
-    fn find_turnover_position(turnover_char: &char) -> usize {
+    fn find_turnover_position(turnover_char: char) -> usize {
         for (i, val) in ALPHABET.iter().enumerate() {
-            if val == turnover_char {
+            if val == &turnover_char {
                 return i;
             }
         }
@@ -129,7 +126,7 @@ impl Rotor {
     pub fn increment_position(&mut self) {
         self.position = (self.position + 1) % NUMBER_LETTERS_IN_ALPHABET;
         if self.position == self.turnover_position {
-            self.turnover_has_occurred = true
+            self.turnover_has_occurred = true;
         }
     }
 
@@ -257,7 +254,7 @@ mod tests {
                 assert!(rotor.turnover_has_occurred);
                 rotor.reset_turnover_state();
             } else {
-                assert!(!rotor.turnover_has_occurred)
+                assert!(!rotor.turnover_has_occurred);
             }
 
             old_position = new_position;
@@ -270,7 +267,7 @@ mod tests {
         let mut rotor = get_cypher_rotor_instance();
         rotor.set_position(16); // letter Q
         rotor.increment_position(); // letter R
-        assert!(rotor.turnover_has_occurred())
+        assert!(rotor.turnover_has_occurred());
     }
 
     #[test]

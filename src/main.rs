@@ -1,3 +1,8 @@
+#![warn(clippy::trivially_copy_pass_by_ref)]
+#![warn(clippy::semicolon_if_nothing_returned)]
+#![warn(clippy::explicit_iter_loop)]
+#![warn(clippy::match_bool)]
+
 mod alphabet;
 mod enigma;
 mod message;

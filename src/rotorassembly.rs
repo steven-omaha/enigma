@@ -54,7 +54,7 @@ impl RotorAssembly {
 
     fn encode_forward(&mut self, input: char) -> char {
         let mut output = input;
-        for rotor in self.rotors.iter_mut() {
+        for rotor in &mut self.rotors {
             output = rotor.encode_char(output);
         }
         output
@@ -65,11 +65,11 @@ impl RotorAssembly {
         rotor.increment_position();
         for i in 0..self.rotors.len() - 1 {
             let r1 = self.rotors.get_mut(i).unwrap();
-            let turnover_has_ocured = r1.turnover_has_occurred();
+            let turnover_has_occurred = r1.turnover_has_occurred();
             r1.reset_turnover_state();
 
             let r2 = self.rotors.get_mut(i + 1).unwrap();
-            if turnover_has_ocured {
+            if turnover_has_occurred {
                 r2.increment_position();
             }
         }
@@ -87,7 +87,7 @@ impl RotorAssembly {
 #[cfg(test)]
 mod tests {
     use crate::alphabet::{ALPHABET, NUMBER_LETTERS_IN_ALPHABET};
-    use crate::rotorassembly::*;
+    use crate::rotorassembly::RotorAssembly;
 
     #[test]
     fn can_init() {
