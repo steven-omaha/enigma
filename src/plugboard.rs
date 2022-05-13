@@ -27,11 +27,15 @@ impl Pair {
 
     pub fn new(char0: char, char1: char) -> Self {
         assert_ne!(char0, char1, "chars cannot be equal");
-        let msg = "must be a capital letter";
-        assert!(is_capital_letter(char0), "{} {}", "char0", msg);
-        assert!(is_capital_letter(char1), "{} {}", "char1", msg);
+        Self::assert_capital_letter(char0);
+        Self::assert_capital_letter(char1);
         Pair { char0, char1 }
     }
+
+    fn assert_capital_letter(input: char){
+        let msg = "must be a capital letter" ;
+        assert!(is_capital_letter(input), "{} {}", input, msg);
+        }
 }
 
 pub(crate) const PATH: &str = "src/plugboard.txt";
