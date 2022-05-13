@@ -37,12 +37,7 @@ fn print_possible_positions(message: &Message, known_plaintext: &str, result: &[
 fn characters_at_each_position_do_not_match(text_1: &str, text_2: &str) -> bool {
     assert_eq!(text_1.len(), text_2.len());
     assert_ne!(text_1.len(), 0);
-    for (char_1, char_2) in zip(text_1.chars(), text_2.chars()) {
-        if char_1 == char_2 {
-            return false;
-        }
-    }
-    true
+    zip(text_1.chars(), text_2.chars()).all(|(x, y)| x != y)
 }
 
 #[cfg(test)]
