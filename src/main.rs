@@ -1,13 +1,13 @@
 mod alphabet;
 mod enigma;
 mod message;
+mod mode;
 mod plugboard;
 mod rotor;
 mod rotorassembly;
-mod mode;
 
 use crate::enigma::Enigma;
-use crate::message::{preprocess_for_enigma, TEXT};
+use crate::message::{preprocess_for_enigma, Indicator, TEXT};
 use crate::plugboard::Plugboard;
 use std::iter::zip;
 use std::path::Path;
@@ -18,7 +18,10 @@ const ROTOR_SETTINGS: [usize; 3] = [7, 8, 21];
 fn main() {
     let mut enigma = build_enigma();
 
-    let message = message::Message::new(INITIALIZATION.to_string(), preprocess_for_enigma(TEXT));
+    let indicator = Indicator {
+        value: INITIALIZATION.to_string(),
+    };
+    let message = message::Message::new(indicator, preprocess_for_enigma(TEXT));
     println!("CLEARTEXT MESSAGE:\n{}", message);
     println!();
 

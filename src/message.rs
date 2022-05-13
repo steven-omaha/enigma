@@ -1,4 +1,5 @@
 use crate::alphabet::{is_capital_letter, is_small_letter};
+use crate::mode::Mode;
 use std::fmt::{Display, Formatter};
 
 pub const TEXT: &str =
@@ -6,12 +7,35 @@ pub const TEXT: &str =
     Bedeckt. Gelegentlicher Nebel. Drei Liter.";
 
 pub struct Message {
-    pub indicator: String,
+    pub indicator: Indicator,
     pub text: String,
 }
 
+pub struct Indicator {
+    pub value: String,
+}
+
+impl Indicator {
+    pub fn sanity_check(&self, mode: &Mode) {
+        let length = self.value.len();
+        match mode {
+            Mode::Decrypt => Self::check_length(length, 6),
+            Mode::Encrypt => Self::check_length(length, 3),
+        }
+    }
+
+    fn check_length(length: usize, required_length: usize) {
+        let message = "indicator must be of length";
+        assert_eq!(length, required_length, "{} {}", message, required_length);
+    }
+
+    pub fn get_first_triplet(&self) -> &str {
+        &self.value[0..3]
+    }
+}
+
 impl Message {
-    pub fn new(indicator: String, text: String) -> Self {
+    pub fn new(indicator: Indicator, text: String) -> Self {
         Message { indicator, text }
     }
 }
@@ -20,7 +44,7 @@ impl Display for Message {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         f.write_fmt(format_args!(
             "indicator: {}  \ntext: {}",
-            self.indicator, self.text
+            self.indicator.value, self.text
         ))
     }
 }

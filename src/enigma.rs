@@ -1,5 +1,5 @@
 use crate::alphabet::{get_position_in_alphabet, is_capital_letter};
-use crate::message::Message;
+use crate::message::{Indicator, Message};
 use crate::mode::Mode;
 use crate::plugboard::Plugboard;
 use crate::rotorassembly::RotorAssembly;
@@ -24,41 +24,27 @@ impl Enigma {
         Message::new(encrypted_indicator, text)
     }
 
-    fn set_indicator(&mut self, indicator: &str, mode: Mode) {
-        Self::sanity_check_indicator(indicator, mode);
+    fn set_indicator(&mut self, indicator: &Indicator, mode: Mode) {
+        indicator.sanity_check(&mode);
         let mut positions = [0; 3];
-        for (i, char) in indicator[0..3].chars().enumerate() {
+        for (i, char) in indicator.get_first_triplet().chars().enumerate() {
             positions[i] = get_position_in_alphabet(char);
         }
         self.set_positions(positions);
     }
 
-    fn sanity_check_indicator(indicator: &str, mode: Mode) {
+    fn encode_indicator(&mut self, indicator: &Indicator, mode: Mode) -> Indicator {
+        indicator.sanity_check(&mode);
         match mode {
             Mode::Decrypt => {
-                assert_eq!(indicator.len(), 6);
-                assert_eq!(
-                    indicator[0..3],
-                    indicator[3..6],
-                    "first half of indicator must equal second half"
-                );
-            }
-            Mode::Encrypt => assert_eq!(indicator.len(), 3),
-        }
-    }
-
-    pub fn encode_indicator(&mut self, vec: &str, mode: Mode) -> String {
-        match mode {
-            Mode::Decrypt => {
-                assert_eq!(vec.len(), 6, "initialization vector must be of length 6");
-                self.encode_message(vec)
+                let value = self.encode_message(indicator.value.as_str());
+                Indicator { value }
             }
             Mode::Encrypt => {
-                assert_eq!(vec.len(), 3, "initialization vector must be of length 3");
-                let mut result1 = self.encode_message(vec);
-                let result2 = self.encode_message(vec);
+                let mut result1 = self.encode_message(indicator.value.as_str());
+                let result2 = self.encode_message(indicator.value.as_str());
                 result1.push_str(result2.as_str());
-                result1
+                Indicator { value: result1 }
             }
         }
     }
