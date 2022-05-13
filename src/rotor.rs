@@ -10,6 +10,8 @@ use std::path::Path;
 use std::str::Split;
 
 pub const PATH: &str = "src/rotors.txt";
+const PLACEHOLDER: char = '_';
+const TURNOVER: char = 'T';
 
 #[derive(PartialEq)]
 enum ShiftDirection {
@@ -34,8 +36,9 @@ impl Reflector {
     pub fn from_file(path: &Path, id: &str) -> Reflector {
         let items = get_items_from_file_for_id(path, id);
         assert_eq!(
-            items.1, '_',
-            "Found turnover char for reflector. Should have been `_`."
+            items.1, PLACEHOLDER,
+            "{} {}",
+            "Found turnover char for reflector. Should have been", PLACEHOLDER
         );
         Reflector {
             chars: mapping_to_vector(&items.0),
@@ -45,7 +48,11 @@ impl Reflector {
 
 impl Debug for Rotor {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let turnover = if self.turnover_has_occurred { "T" } else { "_" };
+        let turnover = if self.turnover_has_occurred {
+            TURNOVER
+        } else {
+            PLACEHOLDER
+        };
         f.write_fmt(format_args!(
             "{}/{} {}",
             self.position, self.turnover_position, turnover
@@ -194,7 +201,12 @@ fn extract_data_from_line(mut items: Split<char>) -> (String, char) {
         .expect("`:` separator missing")
         .chars()
         .next()
-        .expect("Turnover char not found. Consider using`_` as placeholder");
+        .unwrap_or_else(|| {
+            panic!(
+                "{} '{}' {}",
+                "Turnover char not found. Consider using", PLACEHOLDER, "as placeholder."
+            )
+        });
     (pattern, turnover_char)
 }
 
