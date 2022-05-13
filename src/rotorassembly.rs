@@ -61,8 +61,15 @@ impl RotorAssembly {
     }
 
     fn increment_cypher_rotor_positions(&mut self) {
-        let rotor = self.rotors.get_mut(0).unwrap();
-        rotor.increment_position();
+        self.increment_first_rotor();
+        self.carry_over_position_increments();
+    }
+
+    fn increment_first_rotor(&mut self) {
+        self.rotors.get_mut(0).unwrap().increment_position();
+    }
+
+    fn carry_over_position_increments(&mut self) {
         for i in 0..self.rotors.len() - 1 {
             let r1 = self.rotors.get_mut(i).unwrap();
             let turnover_has_occurred = r1.turnover_has_occurred();
