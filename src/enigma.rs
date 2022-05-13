@@ -1,5 +1,6 @@
 use crate::alphabet::{get_position_in_alphabet, is_capital_letter};
 use crate::message::Message;
+use crate::mode::Mode;
 use crate::plugboard::Plugboard;
 use crate::rotorassembly::RotorAssembly;
 
@@ -8,21 +9,16 @@ pub struct Enigma {
     plugboard: Plugboard,
 }
 
-enum Mode {
-    Encrypt,
-    Decrypt,
-}
-
 impl Enigma {
     pub fn decrypt(&mut self, message: Message) -> Message {
-        let decrypted_indicator = self.get_decrypted_indicator(&message.indicator);
+        let decrypted_indicator = self.encode_indicator(&message.indicator, Mode::Decrypt);
         self.set_indicator(&decrypted_indicator, Mode::Decrypt);
         let text = self.encode_message(&message.text);
         Message::new(decrypted_indicator, text)
     }
 
     pub fn encrypt(&mut self, message: Message) -> Message {
-        let encrypted_indicator = self.get_encrypted_indicator(&message.indicator);
+        let encrypted_indicator = self.encode_indicator(&message.indicator, Mode::Encrypt);
         self.set_indicator(&message.indicator, Mode::Encrypt);
         let text = self.encode_message(&message.text);
         Message::new(encrypted_indicator, text)
@@ -46,22 +42,25 @@ impl Enigma {
                     indicator[3..6],
                     "first half of indicator must equal second half"
                 );
-            },
-            Mode::Encrypt => assert_eq!(indicator.len(), 3)
+            }
+            Mode::Encrypt => assert_eq!(indicator.len(), 3),
         }
     }
 
-    pub fn get_decrypted_indicator(&mut self, vec: &str) -> String {
-        assert_eq!(vec.len(), 6, "initialization vector must be of length 6");
-        self.encode_message(vec)
-    }
-
-    pub fn get_encrypted_indicator(&mut self, vec: &str) -> String {
-        assert_eq!(vec.len(), 3, "initialization vector must be of length 3");
-        let mut result1 = self.encode_message(vec);
-        let result2 = self.encode_message(vec);
-        result1.push_str(result2.as_str());
-        result1
+    pub fn encode_indicator(&mut self, vec: &str, mode: Mode) -> String {
+        match mode {
+            Mode::Decrypt => {
+                assert_eq!(vec.len(), 6, "initialization vector must be of length 6");
+                self.encode_message(vec)
+            }
+            Mode::Encrypt => {
+                assert_eq!(vec.len(), 3, "initialization vector must be of length 3");
+                let mut result1 = self.encode_message(vec);
+                let result2 = self.encode_message(vec);
+                result1.push_str(result2.as_str());
+                result1
+            }
+        }
     }
 
     pub fn set_positions(&mut self, positions: [usize; 3]) {
@@ -75,7 +74,7 @@ impl Enigma {
         }
     }
 
-    pub fn encode_char(&mut self, input: char) -> char {
+    fn encode_char(&mut self, input: char) -> char {
         self.plugboard
             .encode_char(self.assembly.encode_char(self.plugboard.encode_char(input)))
     }

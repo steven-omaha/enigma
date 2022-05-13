@@ -4,6 +4,7 @@ mod message;
 mod plugboard;
 mod rotor;
 mod rotorassembly;
+mod mode;
 
 use crate::enigma::Enigma;
 use crate::message::{preprocess_for_enigma, TEXT};
