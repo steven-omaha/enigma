@@ -32,10 +32,10 @@ impl Pair {
         Pair { char0, char1 }
     }
 
-    fn assert_capital_letter(input: char){
-        let msg = "must be a capital letter" ;
+    fn assert_capital_letter(input: char) {
+        let msg = "must be a capital letter";
         assert!(is_capital_letter(input), "{} {}", input, msg);
-        }
+    }
 }
 
 pub(crate) const PATH: &str = "src/plugboard.txt";

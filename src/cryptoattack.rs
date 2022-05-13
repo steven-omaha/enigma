@@ -12,7 +12,10 @@ fn find_possible_positions(message: &Message, known_plaintext: &str) -> Vec<usiz
     let max_index = message.text.len() - plaintext_length;
     let mut result = Vec::new();
     for i in 0..max_index {
-        if characters_at_each_position_do_not_match(&message.text[i..i + plaintext_length], known_plaintext) {
+        if characters_at_each_position_do_not_match(
+            &message.text[i..i + plaintext_length],
+            known_plaintext,
+        ) {
             result.push(i);
         }
     }

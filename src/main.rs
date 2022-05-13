@@ -4,20 +4,20 @@
 #![warn(clippy::match_bool)]
 
 mod alphabet;
+mod cryptoattack;
 mod enigma;
 mod message;
 mod mode;
 mod plugboard;
 mod rotor;
 mod rotorassembly;
-mod cryptoattack;
 
+use crate::cryptoattack::known_plaintext_attack;
 use crate::enigma::Enigma;
 use crate::message::{preprocess_for_enigma, Indicator, TEXT};
 use crate::plugboard::Plugboard;
 use std::iter::zip;
 use std::path::Path;
-use crate::cryptoattack::known_plaintext_attack;
 
 const INITIALIZATION: &str = "QRS";
 const ROTOR_SETTINGS: [usize; 3] = [7, 8, 21];
@@ -36,7 +36,10 @@ fn main() {
 
     known_plaintext_attack(&encrypted_message, "WETTERBERICHT".to_string());
     println!();
-    known_plaintext_attack(&encrypted_message, "WETTERBERICHTNULLSECHSNULLNULL".to_string());
+    known_plaintext_attack(
+        &encrypted_message,
+        "WETTERBERICHTNULLSECHSNULLNULL".to_string(),
+    );
 }
 
 fn build_enigma() -> Enigma {
