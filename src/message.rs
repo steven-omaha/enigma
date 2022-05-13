@@ -12,7 +12,7 @@ pub struct Message {
 }
 
 pub struct Indicator {
-    pub value: String,
+    value: String,
 }
 
 impl Indicator {
@@ -22,6 +22,10 @@ impl Indicator {
             Mode::Decrypt => Self::check_length(length, 6),
             Mode::Encrypt => Self::check_length(length, 3),
         }
+    }
+
+    pub fn new(value: String) -> Self {
+        Self { value }
     }
 
     fn check_length(length: usize, required_length: usize) {

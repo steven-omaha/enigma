@@ -42,15 +42,15 @@ impl Enigma {
     }
 
     fn encrypt_indicator(&mut self, indicator: &Indicator) -> Indicator {
-        let mut result1 = self.encode_message(indicator.value.as_str());
-        let result2 = self.encode_message(indicator.value.as_str());
-        result1.push_str(result2.as_str());
-        Indicator { value: result1 }
+        let mut result = self.encode_message(indicator.get_first_triplet());
+        let second_triplet = self.encode_message(indicator.get_first_triplet());
+        result.push_str(second_triplet.as_str());
+        Indicator::new(result)
     }
 
     fn decrypt_indicator(&mut self, indicator: &Indicator) -> Indicator {
-        let value = self.encode_message(indicator.value.as_str());
-        Indicator { value }
+        let value = self.encode_message(indicator.get_first_triplet());
+        Indicator::new(value)
     }
 
     pub fn set_positions(&mut self, positions: [usize; 3]) {

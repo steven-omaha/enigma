@@ -23,9 +23,7 @@ const ROTOR_SETTINGS: [usize; 3] = [7, 8, 21];
 fn main() {
     let mut enigma = build_enigma();
 
-    let indicator = Indicator {
-        value: INITIALIZATION.to_string(),
-    };
+    let indicator = Indicator::new(INITIALIZATION.to_string());
     let message = message::Message::new(indicator, preprocess_for_enigma(TEXT));
     println!("CLEARTEXT MESSAGE:\n{}", message);
     println!();
