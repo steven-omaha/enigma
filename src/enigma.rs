@@ -8,43 +8,47 @@ pub struct Enigma {
     plugboard: Plugboard,
 }
 
+enum Mode {
+    Encrypt,
+    Decrypt,
+}
+
 impl Enigma {
     pub fn decrypt(&mut self, message: Message) -> Message {
         let decrypted_indicator = self.get_decrypted_indicator(&message.indicator);
-        self.set_indicator_for_decryption(&decrypted_indicator);
+        self.set_indicator(&decrypted_indicator, Mode::Decrypt);
         let text = self.encode_message(&message.text);
         Message::new(decrypted_indicator, text)
     }
 
     pub fn encrypt(&mut self, message: Message) -> Message {
         let encrypted_indicator = self.get_encrypted_indicator(&message.indicator);
-        self.set_indicator_for_encryption(&message.indicator);
+        self.set_indicator(&message.indicator, Mode::Encrypt);
         let text = self.encode_message(&message.text);
         Message::new(encrypted_indicator, text)
     }
 
-    pub fn set_indicator_for_encryption(&mut self, indicator: &str) {
-        assert_eq!(indicator.len(), 3);
-        let mut positions = [0; 3];
-        for (i, char) in indicator.chars().enumerate() {
-            positions[i] = get_position_in_alphabet(char);
-        }
-        self.set_positions(positions);
-    }
-
-    pub fn set_indicator_for_decryption(&mut self, indicator: &str) {
-        assert_eq!(indicator.len(), 6);
-        assert_eq!(
-            indicator[0..3],
-            indicator[3..6],
-            "first half of indicator must equal second half"
-        );
-
+    fn set_indicator(&mut self, indicator: &str, mode: Mode) {
+        Self::sanity_check_indicator(indicator, mode);
         let mut positions = [0; 3];
         for (i, char) in indicator[0..3].chars().enumerate() {
             positions[i] = get_position_in_alphabet(char);
         }
         self.set_positions(positions);
+    }
+
+    fn sanity_check_indicator(indicator: &str, mode: Mode) {
+        match mode {
+            Mode::Decrypt => {
+                assert_eq!(indicator.len(), 6);
+                assert_eq!(
+                    indicator[0..3],
+                    indicator[3..6],
+                    "first half of indicator must equal second half"
+                );
+            },
+            Mode::Encrypt => assert_eq!(indicator.len(), 3)
+        }
     }
 
     pub fn get_decrypted_indicator(&mut self, vec: &str) -> String {
