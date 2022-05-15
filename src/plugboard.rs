@@ -63,7 +63,7 @@ impl Plugboard {
     }
 
     fn sanity_check(items: &[Pair]) {
-        assert!(!items.is_empty() && items.len() <= 10);
+        assert!(items.len() <= 10);
 
         let mut hs = HashSet::new();
         for pair in items {
@@ -84,6 +84,10 @@ impl Plugboard {
             }
         }
         input
+    }
+
+    pub fn add_pair(&mut self, pair: Pair) {
+        self.pairs.push(pair);
     }
 }
 

@@ -1,11 +1,61 @@
+
+use crate::alphabet::{ALPHABET, NUMBER_LETTERS_IN_ALPHABET};
 use crate::message::Message;
+use crate::plugboard::Pair;
+use crate::{Enigma, Plugboard, rotor};
 use std::iter::zip;
+use std::path::Path;
+use crate::rotorassembly::RotorAssembly;
+
+
+struct EnigmaAttack {
+    enigma: Enigma,
+    positions: [usize; 3],
+}
+
+impl EnigmaAttack {
+    fn new(enigma: Enigma, positions: [usize; 3]) -> EnigmaAttack {
+        for pos in &positions {
+            assert!(pos < &NUMBER_LETTERS_IN_ALPHABET);
+        }
+        EnigmaAttack { enigma, positions }
+    }
+
+    fn new_default() -> EnigmaAttack {
+        // order of rotors is correct, positions are not
+        let plugboard = Plugboard::new(vec![]);
+        let rotor_path = Path::new(rotor::PATH);
+        let mut rotors = vec![
+            rotor::Rotor::from_file(rotor_path, "I"),
+            rotor::Rotor::from_file(rotor_path, "II"),
+            rotor::Rotor::from_file(rotor_path, "III"),
+        ];
+        let reflector = rotor::Reflector::from_file(rotor_path, "B");
+        let assembly = RotorAssembly::new(rotors, reflector);
+        EnigmaAttack::new(Enigma::new(assembly, plugboard), [0, 0, 0])
+    }
+
+    fn reset_positions(&mut self) {
+        self.enigma.set_positions(self.positions);
+    }
+}
 
 pub fn known_plaintext_attack(message: &Message, known_plaintext: String) {
     let possible_positions = find_possible_positions(message, &known_plaintext);
     print_possible_positions(message, &known_plaintext, &possible_positions);
     println!("possible positions: {}", possible_positions.len());
+    let first_position = possible_positions.get(0).unwrap();
+    brute_force_plugboard(&message, known_plaintext.as_str(), first_position);
 }
+
+fn brute_force_plugboard(message: &Message, known_plaintext: &str, position: &usize) {
+    let mut attack = EnigmaAttack::new_default();
+    for (crypt_char, clear_char) in zip(message.text.chars().skip(*position), known_plaintext.chars()) {
+        println!("{} {}", crypt_char, clear_char);
+    }
+    attack.reset_positions();
+}
+
 
 fn find_possible_positions(message: &Message, known_plaintext: &str) -> Vec<usize> {
     let plaintext_length = known_plaintext.len();
