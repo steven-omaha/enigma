@@ -1,12 +1,9 @@
-
-use crate::alphabet::{ALPHABET, NUMBER_LETTERS_IN_ALPHABET};
+use crate::alphabet::NUMBER_LETTERS_IN_ALPHABET;
 use crate::message::Message;
-use crate::plugboard::Pair;
-use crate::{Enigma, Plugboard, rotor};
+use crate::rotorassembly::RotorAssembly;
+use crate::{rotor, Enigma, Plugboard};
 use std::iter::zip;
 use std::path::Path;
-use crate::rotorassembly::RotorAssembly;
-
 
 struct EnigmaAttack {
     enigma: Enigma,
@@ -25,7 +22,7 @@ impl EnigmaAttack {
         // order of rotors is correct, positions are not
         let plugboard = Plugboard::new(vec![]);
         let rotor_path = Path::new(rotor::PATH);
-        let mut rotors = vec![
+        let rotors = vec![
             rotor::Rotor::from_file(rotor_path, "I"),
             rotor::Rotor::from_file(rotor_path, "II"),
             rotor::Rotor::from_file(rotor_path, "III"),
@@ -45,17 +42,18 @@ pub fn known_plaintext_attack(message: &Message, known_plaintext: String) {
     print_possible_positions(message, &known_plaintext, &possible_positions);
     println!("possible positions: {}", possible_positions.len());
     let first_position = possible_positions.get(0).unwrap();
-    brute_force_plugboard(&message, known_plaintext.as_str(), first_position);
+    brute_force_plugboard(message, known_plaintext.as_str(), *first_position);
 }
 
-fn brute_force_plugboard(message: &Message, known_plaintext: &str, position: &usize) {
+fn brute_force_plugboard(message: &Message, known_plaintext: &str, position: usize) {
     let mut attack = EnigmaAttack::new_default();
-    for (crypt_char, clear_char) in zip(message.text.chars().skip(*position), known_plaintext.chars()) {
+    for (crypt_char, clear_char) in
+        zip(message.text.chars().skip(position), known_plaintext.chars())
+    {
         println!("{} {}", crypt_char, clear_char);
     }
     attack.reset_positions();
 }
-
 
 fn find_possible_positions(message: &Message, known_plaintext: &str) -> Vec<usize> {
     let plaintext_length = known_plaintext.len();
